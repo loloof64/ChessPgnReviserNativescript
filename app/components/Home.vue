@@ -5,23 +5,22 @@
     </ActionBar>
 
     <GridLayout>
-      <Label class="info">
-        <FormattedString>
-          <Span class="fas" text.decode="&#xf135; " />
-          <Span :text="message" />
-        </FormattedString>
-      </Label>
+     <chess-board size="200" />
     </GridLayout>
   </Page>
 </template>
 
 <script>
 import { computed } from "@vue/composition-api";
+import ChessBoard from './Chessboard/Chessboard.vue';
 export default {
   setup() {
     const message = computed(() => "Blank {N}-Vue app");
     return {message};
   },
+  components: {
+      ChessBoard,
+  }
 };
 </script>
 
@@ -29,15 +28,6 @@ export default {
 @import "@nativescript/theme/scss/variables/blue";
 
 // Custom styles
-.fas {
-  @include colorize($color: accent);
-}
-
-.info {
-  font-size: 20;
-  horizontal-align: center;
-  vertical-align: center;
-}
 
 ActionBar {
     background-color: blue;

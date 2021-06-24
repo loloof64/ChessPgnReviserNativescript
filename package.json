@@ -37,9 +37,11 @@
     "category-general"
   ],
   "dependencies": {
+    "@nativescript-community/ui-svg": "^0.0.8",
     "@nativescript/core": "~8.0.0",
     "@nativescript/theme": "~3.0.1",
     "@vue/composition-api": "^1.0.0-rc.12",
+    "chess.js": "^0.12.0",
     "nativescript-vue": "~2.9.0"
   },
   "devDependencies": {

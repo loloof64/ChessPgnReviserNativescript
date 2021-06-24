@@ -206,6 +206,24 @@
   "resolved" "https://registry.npmjs.org/@discoveryjs/json-ext/-/json-ext-0.5.3.tgz"
   "version" "0.5.3"
 
+"@nativescript-community/text@^1.4.6":
+  "integrity" "sha512-JNZp0p2TlLEdYa5M2tcnsvsKrQNP9S1Pu+o/k6HSx/rjeSi+RGsoTDA0JatxiTFltGOJfiQxew9FPjjaOgwnQA=="
+  "resolved" "https://registry.npmjs.org/@nativescript-community/text/-/text-1.4.11.tgz"
+  "version" "1.4.11"
+
+"@nativescript-community/ui-canvas@^4.0.49":
+  "integrity" "sha512-sZev5Ua/kTwnjwGrYhwYFs/7waeVfgdc8hZSafpc+IlDvDdQ4CVvrvLTLPxAnsnu7K5z+CD+cmzyY8ddDspcgg=="
+  "resolved" "https://registry.npmjs.org/@nativescript-community/ui-canvas/-/ui-canvas-4.0.49.tgz"
+  "version" "4.0.49"
+
+"@nativescript-community/ui-svg@^0.0.8":
+  "integrity" "sha512-57n68lwWdy5C9x0z5f8ws030VsAcbf2HaLqFkynlIwC4yN/Ymtx66v6F9sl7qK/pC5iYV3DDV0sdOFIoQpyrOA=="
+  "resolved" "https://registry.npmjs.org/@nativescript-community/ui-svg/-/ui-svg-0.0.8.tgz"
+  "version" "0.0.8"
+  dependencies:
+    "@nativescript-community/text" "^1.4.6"
+    "@nativescript-community/ui-canvas" "^4.0.49"
+
 "@nativescript/android@8.0.0":
   "integrity" "sha512-p7eGwmE2+EvkQ4vt4scIrWqVuXytKv+GiHofrVRME1zUaTNMLSdB9ZyQOukfIvCx09iIufD42wN2a0IkgcDBvw=="
   "resolved" "https://registry.npmjs.org/@nativescript/android/-/android-8.0.0.tgz"
@@ -733,6 +751,11 @@
   dependencies:
     "ansi-styles" "^4.1.0"
     "supports-color" "^7.1.0"
+
+"chess.js@^0.12.0":
+  "integrity" "sha512-eF1xf4j88r/AwIRxqV1FXZbVgMt4yUx05xrL+ZMqUrY+snFrUxGVHs0VgEd3AvngujDE9th7XZqqCwEKEQ7mWQ=="
+  "resolved" "https://registry.npmjs.org/chess.js/-/chess.js-0.12.0.tgz"
+  "version" "0.12.0"
 
 "chokidar@^3.4.2", "chokidar@>=3.0.0 <4.0.0":
   "integrity" "sha512-ekGhOnNVPgT77r4K/U3GDhu+FQ2S8TnK/s2KbIGXi0SZWuwkZ2QNyfWdZW+TVfn84DpEP7rLeCt2UI6bJ8GwbQ=="
