@@ -38,4 +38,12 @@ export default {
   horizontal-align: center;
   vertical-align: center;
 }
+
+ActionBar {
+    background-color: blue;
+}
+
+ActionBar > Label {
+    color: white;
+}
 </style>
