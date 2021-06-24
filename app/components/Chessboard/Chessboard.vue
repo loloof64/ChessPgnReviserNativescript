@@ -5,56 +5,55 @@
     :height="size"
   >
     <Label
-      v-for="coordData in $data.$_coordinates"
+      v-for="coordData in coordinates"
       :key="coordData.key"
       :text="coordData.text"
-      :fontSize="$_coordinatesSize"
+      :fontSize="coordinatesSize"
       :left="coordData.left"
       :top="coordData.top"
       :color="coordinatesColor"
       fontWeight="bold"
     />
     <Label
-      v-for="cellData in $data.$_cells"
+      v-for="cellData in cells"
       :key="cellData.key"
       text=""
       :left="cellData.left"
       :top="cellData.top"
-      :width="$_cellsSize"
-      :height="$_cellsSize"
+      :width="cellsSize"
+      :height="cellsSize"
       :backgroundColor="cellData.color"
     />
 
     <SVGView
-      v-for="piece in $data.$_pieces"
+      v-for="piece in pieces"
       :key="piece.key"
       :src="piece.ref"
       :left="piece.left"
       :top="piece.top"
-      :width="$_cellsSize"
-      :height="$_cellsSize"
-      @pan="$_onPan($event)"
+      stretch="aspectFit"
+      :width="cellsSize"
+      :height="cellsSize"
+      @pan="onPan($event)"
     />
 
     <Label
       text=""
-      :backgroundColor="$_whiteTurn ? 'white' : 'black'"
-      :left="$_playerTurnLocation"
-      :top="$_playerTurnLocation"
-      :width="$_playerTurnSize"
-      :height="$_playerTurnSize"
-      :borderRadius="$_playerTurnRadius"
+      :backgroundColor="whiteTurn ? 'white' : 'black'"
+      :left="playerTurnLocation"
+      :top="playerTurnLocation"
+      :width="playerTurnSize"
+      :height="playerTurnSize"
+      :borderRadius="playerTurnRadius"
     />
   </AbsoluteLayout>
 </template>
 
 <script>
+import { computed, ref, onMounted, watch } from "@vue/composition-api";
 import * as Chess from "chess.js";
 
 export default {
-  mounted() {
-    this.$_repaintAll();
-  },
   props: {
     size: {
       type: Number,
@@ -81,30 +80,52 @@ export default {
       default: false,
     },
   },
-  data: function () {
-    return {
-      $_coordinates: [],
-      $_cells: [],
-      $_pieces: [],
-      $_chessLogic: new Chess(),
-      $_dndActive: false,
-      $_prevDeltaX: 0,
-      $_prevDeltaY: 0,
-      $_dndOriginX: 0,
-      $_dndOriginY: 0,
-    };
-  },
-  methods: {
-    $_updateCoordinates() {
+  setup(props) {
+    const coordinates = ref([]);
+    const cells = ref([]);
+    const pieces = ref([]);
+    const chessLogic = ref(new Chess());
+    const dndActive = ref(false);
+    const prevDeltaX = ref(0);
+    const prevDeltaY = ref(0);
+    const dndOriginX = ref(0);
+    const dndOriginY = ref(0);
+
+
+    const cellsSize = computed(function () {
+      return Math.floor((props.size * 1.0) / 9.0);
+    });
+
+    const coordinatesSize = computed(function () {
+      return Math.floor(cellsSize.value * 0.5);
+    });
+
+    const whiteTurn = computed(function () {
+      return chessLogic.value.turn() === "w";
+    });
+
+    const playerTurnLocation = computed(function () {
+      return Math.floor(cellsSize.value * 8.5);
+    });
+
+    const playerTurnSize = computed(function () {
+      return Math.floor(cellsSize.value * 0.4);
+    });
+
+    const playerTurnRadius = computed(function () {
+      return Math.floor(cellsSize.value * 0.2);
+    });
+
+    function updateCoordinates() {
       let newValues = [];
 
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((colIndex) => {
         const text = String.fromCharCode(
-          "A".charCodeAt(0) + (this.reversed ? 7 - colIndex : colIndex)
+          "A".charCodeAt(0) + (props.reversed ? 7 - colIndex : colIndex)
         );
-        const left = Math.floor(this.$_cellsSize * (0.85 + colIndex));
-        const t1 = Math.floor(this.$_cellsSize * -0.17);
-        const t2 = Math.floor(this.$_cellsSize * 8.33);
+        const left = Math.floor(cellsSize.value * (0.85 + colIndex));
+        const t1 = Math.floor(cellsSize.value * -0.17);
+        const t2 = Math.floor(cellsSize.value * 8.33);
 
         const keyTop = `file_coord_top_${colIndex}`;
         const keyBottom = `file_coord_bottom_${colIndex}`;
@@ -125,11 +146,11 @@ export default {
 
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((rowIndex) => {
         const text = String.fromCharCode(
-          "8".charCodeAt(0) - (this.reversed ? 7 - rowIndex : rowIndex)
+          "8".charCodeAt(0) - (props.reversed ? 7 - rowIndex : rowIndex)
         );
-        const top = Math.floor(this.$_cellsSize * (0.65 + rowIndex));
-        const l1 = Math.floor(this.$_cellsSize * 0.1);
-        const l2 = Math.floor(this.$_cellsSize * 8.6);
+        const top = Math.floor(cellsSize.value * (0.65 + rowIndex));
+        const l1 = Math.floor(cellsSize.value * 0.1);
+        const l2 = Math.floor(cellsSize.value * 8.6);
 
         const keyLeft = `rank_coord_left_${rowIndex}`;
         const keyRight = `rank_coord_right_${rowIndex}`;
@@ -148,19 +169,18 @@ export default {
         });
       });
 
-      this.$data.$_coordinates = newValues;
-    },
-    $_updateCells() {
+      coordinates.value = newValues;
+    }
+
+    function updateCells() {
       let newValues = [];
 
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((rowIndex) => {
         [0, 1, 2, 3, 4, 5, 6, 7].forEach((colIndex) => {
-          const left = Math.floor(this.$_cellsSize * (0.5 + colIndex));
-          const top = Math.floor(this.$_cellsSize * (0.5 + rowIndex));
+          const left = Math.floor(cellsSize.value * (0.5 + colIndex));
+          const top = Math.floor(cellsSize.value * (0.5 + rowIndex));
           const isWhiteCell = (rowIndex + colIndex) % 2 == 0;
-          const color = isWhiteCell
-            ? this.whiteCellsColor
-            : this.blackCellsColor;
+          const color = isWhiteCell ? props.whiteCellsColor : props.blackCellsColor;
           const key = `cell_${rowIndex}${colIndex}`;
 
           newValues.push({
@@ -172,26 +192,27 @@ export default {
         });
       });
 
-      this.$data.$_cells = newValues;
-    },
-    $_updatePieces() {
+      cells.value = newValues;
+    }
+
+    function updatePieces() {
       let newValues = [];
 
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((rowIndex) => {
         [0, 1, 2, 3, 4, 5, 6, 7].forEach((colIndex) => {
-          const file = this.reversed ? 7 - colIndex : colIndex;
-          const rank = this.reversed ? rowIndex : 7 - rowIndex;
-          const cellAsAlgebraic = this.$_cellCoordinatesToAlgebraic({
+          const file = props.reversed ? 7 - colIndex : colIndex;
+          const rank = props.reversed ? rowIndex : 7 - rowIndex;
+          const cellAsAlgebraic = cellCoordinatesToAlgebraic({
             file,
             rank,
           });
-          const cellValue = this.$data.$_chessLogic.get(cellAsAlgebraic);
+          const cellValue = chessLogic.value.get(cellAsAlgebraic);
           const cellHasAPiece = cellValue !== null;
 
           if (cellHasAPiece) {
             const ref = `~/components/Chessboard/vectors/${cellValue.color}${cellValue.type}.svg`;
-            const left = Math.floor(this.$_cellsSize * (0.5 + colIndex));
-            const top = Math.floor(this.$_cellsSize * (0.5 + rowIndex));
+            const left = Math.floor(cellsSize.value * (0.5 + colIndex));
+            const top = Math.floor(cellsSize.value * (0.5 + rowIndex));
             const key = `piece_${rowIndex}${colIndex}`;
 
             newValues.push({
@@ -204,20 +225,23 @@ export default {
         });
       });
 
-      this.$data.$_pieces = newValues;
-    },
-    $_repaintAll() {
-      this.$_updateCoordinates();
-      this.$_updateCells();
-      this.$_updatePieces();
-    },
-    $_cellCoordinatesToAlgebraic({ file, rank }) {
+      pieces.value = newValues;
+    }
+
+    function repaintAll() {
+      updateCoordinates();
+      updateCells();
+      updatePieces();
+    }
+
+    function cellCoordinatesToAlgebraic({ file, rank }) {
       return (
         String.fromCharCode("a".charCodeAt(0) + file) +
         String.fromCharCode("1".charCodeAt(0) + rank)
       );
-    },
-    $_onPan(event) {
+    }
+
+    function onPan(event) {
       const origin = event.object;
 
       const panState = event.state;
@@ -226,16 +250,16 @@ export default {
       const isUp = panState === 3;
 
       if (isDown) {
-        this.$data.$_dndOriginX = origin.get("left");
-        this.$data.$_dndOriginY = origin.get("top");
-        this.$data.$_prevDeltaX = event.deltaX;
-        this.$data.$_prevDeltaY = event.deltaY;
-        this.$data.$_dndActive = true;
+        dndOriginX.value  = origin.get("left");
+        dndOriginY.value  = origin.get("top");
+        prevDeltaX.value  = event.deltaX;
+        prevDeltaY.value  = event.deltaY;
+        dndActive.value = true;
       } else if (isPanning) {
-        if (!this.$data.$_dndActive) return;
+        if (!dndActive.value) return;
 
-        const effectiveDeltaX = event.deltaX - this.$data.$_prevDeltaX;
-        const effectiveDeltaY = event.deltaY - this.$data.$_prevDeltaY;
+        const effectiveDeltaX = event.deltaX - prevDeltaX;
+        const effectiveDeltaY = event.deltaY - prevDeltaY;
 
         origin.set("left", origin.get("left") + effectiveDeltaX);
         origin.set("top", origin.get("top") + effectiveDeltaY);
@@ -243,60 +267,51 @@ export default {
         const newX = origin.get("left");
         const newY = origin.get("top");
 
-        const tooFarLeft = newX < this.$_cellsSize * 0.3;
-        const tooFarRight = newX > this.$_cellsSize * 7.7;
+        const tooFarLeft = newX < cellsSize.value * 0.3;
+        const tooFarRight = newX > cellsSize.value * 7.7;
 
-        const tooFarTop = newY < this.$_cellsSize * 0.3;
-        const tooFarBottom = newY > this.$_cellsSize * 7.7;
+        const tooFarTop = newY < cellsSize.value * 0.3;
+        const tooFarBottom = newY > cellsSize.value * 7.7;
 
         if (tooFarLeft || tooFarRight || tooFarTop || tooFarBottom) {
           // cancel drag and drop
-          origin.set("left", this.$data.$_dndOriginX);
-          origin.set("top", this.$data.$_dndOriginY);
-          this.$data.$_dndActive = false;
+          origin.set("left", dndOriginX);
+          origin.set("top", dndOriginY);
+          dndActive = false;
         } else {
-          this.$data.$_prevDeltaX = event.deltaX;
-          this.$data.$_prevDeltaY = event.deltaY;
+          prevDeltaX = event.deltaX;
+          prevDeltaY = event.deltaY;
         }
       } else if (isUp) {
         // cancel drag and drop
-        origin.set("left", this.$data.$_dndOriginX);
-        origin.set("top", this.$data.$_dndOriginY);
-        this.$data.$_dndActive = false;
+        origin.set("left", dndOriginX);
+        origin.set("top", dndOriginY);
+        dndActive = false;
       }
-    },
-  },
-  computed: {
-    $_cellsSize: function () {
-      return Math.floor((this.size * 1.0) / 9.0);
-    },
-    $_coordinatesSize: function () {
-      return Math.floor(this.$_cellsSize * 0.5);
-    },
-    $_whiteTurn: function () {
-      return this.$data.$_chessLogic.turn() === "w";
-    },
-    $_playerTurnLocation: function () {
-      return Math.floor(this.$_cellsSize * 8.5);
-    },
-    $_playerTurnSize: function () {
-      return Math.floor(this.$_cellsSize * 0.4);
-    },
-    $_playerTurnRadius: function () {
-      return Math.floor(this.$_cellsSize * 0.2);
-    },
-  },
-  watch: {
-    reversed: {
-      handler: function () {
-        this.$_repaintAll();
-      },
-    },
-    size: {
-      handler: function () {
-        this.$_repaintAll();
-      },
-    },
+    }
+
+    onMounted(repaintAll);
+
+    watch(() => props.reversed, repaintAll);
+    watch(() => props.size, repaintAll);
+
+    return {
+      coordinates,
+      cells,
+      pieces,
+      chessLogic,
+      dndActive,
+      prevDeltaX,
+      prevDeltaY,
+      dndOriginX,
+      dndOriginY,
+      onPan,
+      coordinatesSize,
+      whiteTurn,
+      playerTurnLocation,
+      playerTurnSize,
+      playerTurnRadius,
+    };
   },
 };
 </script>
