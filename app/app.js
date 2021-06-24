@@ -1,7 +1,10 @@
-import Vue from 'nativescript-vue'
+import Vue from "nativescript-vue";
+import VueCompositionAPI from "@vue/composition-api";
 
-import Home from './components/Home'
+Vue.use(VueCompositionAPI);
+
+import Home from "./components/Home";
 
 new Vue({
-  render: (h) => h('frame', [h(Home)]),
-}).$start()
+  render: h => h("frame", [h(Home)])
+}).$start();
