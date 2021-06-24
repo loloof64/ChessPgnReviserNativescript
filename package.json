@@ -39,6 +39,7 @@
   "dependencies": {
     "@nativescript/core": "~8.0.0",
     "@nativescript/theme": "~3.0.1",
+    "@vue/composition-api": "^1.0.0-rc.12",
     "nativescript-vue": "~2.9.0"
   },
   "devDependencies": {
