@@ -51,7 +51,7 @@
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
-import * as Chess from "chess.js";
+import Chess from 'chess.js';
 
 export default {
   props: {
@@ -91,7 +91,6 @@ export default {
     const dndOriginX = ref(0);
     const dndOriginY = ref(0);
 
-
     const cellsSize = computed(function () {
       return Math.floor((props.size * 1.0) / 9.0);
     });
@@ -117,7 +116,7 @@ export default {
     });
 
     function updateCoordinates() {
-      let newValues = [];
+      coordinates.value.splice(0, coordinates.value.length);
 
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((colIndex) => {
         const text = String.fromCharCode(
@@ -130,13 +129,13 @@ export default {
         const keyTop = `file_coord_top_${colIndex}`;
         const keyBottom = `file_coord_bottom_${colIndex}`;
 
-        newValues.push({
+        coordinates.value.push({
           text,
           left,
           top: t1,
           key: keyTop,
         });
-        newValues.push({
+        coordinates.value.push({
           text,
           left,
           top: t2,
@@ -155,35 +154,35 @@ export default {
         const keyLeft = `rank_coord_left_${rowIndex}`;
         const keyRight = `rank_coord_right_${rowIndex}`;
 
-        newValues.push({
+        coordinates.value.push({
           text,
           left: l1,
           top,
           key: keyLeft,
         });
-        newValues.push({
+        coordinates.value.push({
           text,
           left: l2,
           top,
           key: keyRight,
         });
       });
-
-      coordinates.value = newValues;
     }
 
     function updateCells() {
-      let newValues = [];
+      cells.value.splice(0, cells.value.length);
 
       [0, 1, 2, 3, 4, 5, 6, 7].forEach((rowIndex) => {
         [0, 1, 2, 3, 4, 5, 6, 7].forEach((colIndex) => {
           const left = Math.floor(cellsSize.value * (0.5 + colIndex));
           const top = Math.floor(cellsSize.value * (0.5 + rowIndex));
           const isWhiteCell = (rowIndex + colIndex) % 2 == 0;
-          const color = isWhiteCell ? props.whiteCellsColor : props.blackCellsColor;
+          const color = isWhiteCell
+            ? props.whiteCellsColor
+            : props.blackCellsColor;
           const key = `cell_${rowIndex}${colIndex}`;
 
-          newValues.push({
+          cells.value.push({
             left,
             top,
             color,
@@ -191,8 +190,6 @@ export default {
           });
         });
       });
-
-      cells.value = newValues;
     }
 
     function updatePieces() {
@@ -250,10 +247,10 @@ export default {
       const isUp = panState === 3;
 
       if (isDown) {
-        dndOriginX.value  = origin.get("left");
-        dndOriginY.value  = origin.get("top");
-        prevDeltaX.value  = event.deltaX;
-        prevDeltaY.value  = event.deltaY;
+        dndOriginX.value = origin.get("left");
+        dndOriginY.value = origin.get("top");
+        prevDeltaX.value = event.deltaX;
+        prevDeltaY.value = event.deltaY;
         dndActive.value = true;
       } else if (isPanning) {
         if (!dndActive.value) return;
@@ -311,6 +308,7 @@ export default {
       playerTurnLocation,
       playerTurnSize,
       playerTurnRadius,
+      cellsSize,
     };
   },
 };
