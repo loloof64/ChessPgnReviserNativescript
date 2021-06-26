@@ -254,8 +254,8 @@ export default {
       } else if (isPanning) {
         if (!dndActive.value) return;
 
-        const effectiveDeltaX = event.deltaX - prevDeltaX;
-        const effectiveDeltaY = event.deltaY - prevDeltaY;
+        const effectiveDeltaX = event.deltaX - prevDeltaX.value;
+        const effectiveDeltaY = event.deltaY - prevDeltaY.value;
 
         origin.set("left", origin.get("left") + effectiveDeltaX);
         origin.set("top", origin.get("top") + effectiveDeltaY);
@@ -271,18 +271,18 @@ export default {
 
         if (tooFarLeft || tooFarRight || tooFarTop || tooFarBottom) {
           // cancel drag and drop
-          origin.set("left", dndOriginX);
-          origin.set("top", dndOriginY);
-          dndActive = false;
+          origin.set("left", dndOriginX.value);
+          origin.set("top", dndOriginY.value);
+          dndActive.value = false;
         } else {
-          prevDeltaX = event.deltaX;
-          prevDeltaY = event.deltaY;
+          prevDeltaX.value = event.deltaX;
+          prevDeltaY.value = event.deltaY;
         }
       } else if (isUp) {
         // cancel drag and drop
-        origin.set("left", dndOriginX);
-        origin.set("top", dndOriginY);
-        dndActive = false;
+        origin.set("left", dndOriginX.value);
+        origin.set("top", dndOriginY.value);
+        dndActive.value = false;
       }
     }
 
