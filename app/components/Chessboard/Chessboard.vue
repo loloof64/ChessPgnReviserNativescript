@@ -190,6 +190,7 @@ export default {
         });
       });
     }
+    
 
     function updatePieces() {
       let newValues = [];
