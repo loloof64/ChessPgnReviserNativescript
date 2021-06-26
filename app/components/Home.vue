@@ -5,17 +5,18 @@
     </ActionBar>
 
     <GridLayout>
-      <chess-board :size="boardSize" />
+      <chess-board :size="boardSize" :key="randomKey" />
     </GridLayout>
   </Page>
 </template>
 
 <script>
-import { computed, ref, onMounted } from "@vue/composition-api";
+import { ref, onMounted } from "@vue/composition-api";
 import ChessBoard from "./Chessboard/Chessboard.vue";
 import { Screen, Application } from "@nativescript/core";
 export default {
   setup() {
+
     const boardSize = ref(0);
 
     function updateBoardSize() {
@@ -27,7 +28,7 @@ export default {
       );
     }
 
-    Application.on(Application.orientationChangedEvent, (data) => {
+    Application.on(Application.orientationChangedEvent, () => {
       updateBoardSize();
     });
 

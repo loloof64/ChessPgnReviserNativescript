@@ -25,16 +25,15 @@
       :backgroundColor="cellData.color"
     />
 
-    <SVGView
+    <SVGImage
       v-for="piece in pieces"
       :key="piece.key"
-      :src="piece.ref"
+      :src="piece.pieceRef"
       :left="piece.left"
       :top="piece.top"
-      stretch="aspectFit"
       :width="cellsSize"
       :height="cellsSize"
-      @pan="onPan($event)"
+      @pan="onPan"
     />
 
     <Label
@@ -51,7 +50,7 @@
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
-import Chess from 'chess.js';
+import Chess from "chess.js";
 
 export default {
   props: {
@@ -207,13 +206,13 @@ export default {
           const cellHasAPiece = cellValue !== null;
 
           if (cellHasAPiece) {
-            const ref = `~/components/Chessboard/vectors/${cellValue.color}${cellValue.type}.svg`;
+            const pieceRef = `~/components/Chessboard/vectors/${cellValue.color}${cellValue.type}.svg`;
             const left = Math.floor(cellsSize.value * (0.5 + colIndex));
             const top = Math.floor(cellsSize.value * (0.5 + rowIndex));
             const key = `piece_${rowIndex}${colIndex}`;
 
             newValues.push({
-              ref,
+              pieceRef,
               left,
               top,
               key,
