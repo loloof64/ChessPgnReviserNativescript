@@ -2,10 +2,12 @@
   <Page>
     <ActionBar>
       <Label text="Home" />
+      <ActionItem @tap="reverseBoard"
+        icon="res://reverse"  android.position="actionBar" />
     </ActionBar>
 
     <GridLayout>
-      <chess-board :size="boardSize" :key="randomKey" />
+      <chess-board :size="boardSize" :reversed="boardReversed" />
     </GridLayout>
   </Page>
 </template>
@@ -18,6 +20,7 @@ export default {
   setup() {
 
     const boardSize = ref(0);
+    const boardReversed = ref(false);
 
     function updateBoardSize() {
       const screenWidthDip = Screen.mainScreen.widthDIPs;
@@ -28,6 +31,10 @@ export default {
       );
     }
 
+    function reverseBoard() {
+      boardReversed.value = ! boardReversed.value;
+    }
+
     Application.on(Application.orientationChangedEvent, () => {
       updateBoardSize();
     });
@@ -36,7 +43,7 @@ export default {
       updateBoardSize();
     });
 
-    return { boardSize };
+    return { boardSize, boardReversed, reverseBoard };
   },
   components: {
     ChessBoard,
