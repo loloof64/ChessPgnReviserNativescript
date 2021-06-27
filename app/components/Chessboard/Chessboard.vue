@@ -115,6 +115,7 @@ export default {
     const dndFromRank = ref(-1000);
     const dndToFile = ref(-1000);
     const dndToRank = ref(-1000);
+    const dndActive = ref(false);
     const isPendingPromotion = ref(false);
     const promotionDialogActive = ref(false);
 
@@ -286,6 +287,7 @@ export default {
       dndToRank.value = -1000;
       prevDeltaX.value = 0;
       prevDeltaY.value = 0;
+      dndActive.value = false;
       repaintAll();
     }
 
@@ -311,8 +313,8 @@ export default {
         prevDeltaX.value = 0;
         prevDeltaY.value = 0;
 
-        const col = origin.left;
-        const row = origin.top;
+        const col = getColFromX(origin.left);
+        const row = getRowFromY(origin.top);
 
         const file = props.reversed ? 7 - col : col;
         const rank = props.reversed ? row : 7 - row;
@@ -321,14 +323,15 @@ export default {
           file,
           rank,
         });
+
         if (!chessLogic.value.isPlayerInTurnPieceAtCell(cellAlgebraic)) return;
 
         dndFromFile.value = file;
         dndFromRank.value = rank;
-
-        updateCells();
+        dndActive.value = true;
+        repaintAll();
       } else if (isPanning) {
-        
+        if (!dndActive.value) return;
         origin.translateX += event.deltaX - prevDeltaX.value;
         origin.translateY += event.deltaY - prevDeltaY.value;
 
@@ -360,7 +363,7 @@ export default {
 
         updateCells();
       } else if (isUp) {
-
+        if (!dndActive.value) return;
         const x = origin.left + origin.translateX;
         const y = origin.top + origin.translateY;
 

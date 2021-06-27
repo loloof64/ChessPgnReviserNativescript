@@ -2,10 +2,16 @@
   <Page>
     <ActionBar>
       <Label text="Home" />
-      <ActionItem @tap="newGame"
-        icon="res://start"  android.position="actionBar" />
-      <ActionItem @tap="reverseBoard"
-        icon="res://reverse"  android.position="actionBar" />
+      <ActionItem
+        @tap="newGame"
+        icon="res://start"
+        android.position="actionBar"
+      />
+      <ActionItem
+        @tap="reverseBoard"
+        icon="res://reverse"
+        android.position="actionBar"
+      />
     </ActionBar>
 
     <GridLayout>
@@ -20,7 +26,6 @@ import ChessBoard from "./Chessboard/Chessboard.vue";
 import { Screen, Application } from "@nativescript/core";
 export default {
   setup() {
-
     const board = ref();
     const boardSize = ref(0);
     const boardReversed = ref(false);
@@ -39,7 +44,7 @@ export default {
     }
 
     function reverseBoard() {
-      boardReversed.value = ! boardReversed.value;
+      boardReversed.value = !boardReversed.value;
     }
 
     Application.on(Application.orientationChangedEvent, () => {

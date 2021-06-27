@@ -57,9 +57,9 @@ export default {
     const rookImage = ref("");
     const bishopImage = ref("");
     const knightImage = ref("");
-    
+
     function imagesSize() {
-        return props.size * 0.2;
+      return props.size * 0.2;
     }
 
     function updatePiecesImages() {
