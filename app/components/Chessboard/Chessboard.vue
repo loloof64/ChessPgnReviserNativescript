@@ -292,11 +292,11 @@ export default {
     }
 
     function getColFromX(x) {
-      return Math.floor((x - cellsSize.value * 0.5) / cellsSize.value);
+      return Math.floor(x / cellsSize.value);
     }
 
     function getRowFromY(y) {
-      return Math.floor((y - cellsSize.value * 0.5) / cellsSize.value);
+      return Math.floor(y / cellsSize.value);
     }
 
     function onPan(event) {
