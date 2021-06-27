@@ -30,9 +30,9 @@ export default class ChessBoardLogic {
   }
 
   isPromotionMove({ fromAlgebraic, toAlgebraic }) {
-    if (!this.isLegalMove({ fromAlgebraic, toAlgebraic })) return;
-    const piece = this.getValueAtCell(fromAlgebraic);
-    if (piece?.type != "p") return;
+    if (!this.isLegalMove({ fromAlgebraic, toAlgebraic })) return false;
+    const pieceType = this.getValueAtCell(fromAlgebraic)?.type;
+    if (pieceType !== "p") return false;
     const { rank: fromRank } = ChessBoardLogic.coordinatesFromAlgebraic(
       fromAlgebraic
     );
@@ -42,15 +42,17 @@ export default class ChessBoardLogic {
 
     return (
       (this.isWhiteTurn && fromRank === 6 && toRank === 7) ||
-      (!this.isWhiteTurn &&
-        fromRank === 1 &&
-        toRank === (this.isWhiteTurn && fromRank === 6 && toRank === 0))
+      (!this.isWhiteTurn && fromRank === 1 && toRank === 0)
     );
   }
 
   isLegalMove({ fromAlgebraic, toAlgebraic }) {
     const logicClone = new Chess(this.logic.fen());
-    const result = logicClone.move({ from: fromAlgebraic, to: toAlgebraic });
+    const result = logicClone.move({
+      from: fromAlgebraic,
+      to: toAlgebraic,
+      promotion: "q"
+    });
     return result !== null;
   }
 

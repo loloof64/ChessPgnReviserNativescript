@@ -7,7 +7,7 @@
   >
     <SVGImage
       class="button"
-      :src="queenImage"
+      :src="queenImage()"
       :width="imagesSize()"
       :height="imagesSize()"
       @tap="selectQueen"
@@ -15,7 +15,7 @@
 
     <SVGImage
       class="button"
-      :src="rookImage"
+      :src="rookImage()"
       :width="imagesSize()"
       :height="imagesSize()"
       @tap="selectRook"
@@ -23,7 +23,7 @@
 
     <SVGImage
       class="button"
-      :src="bishopImage"
+      :src="bishopImage()"
       :width="imagesSize()"
       :height="imagesSize()"
       @tap="selectBishop"
@@ -31,7 +31,7 @@
 
     <SVGImage
       class="button"
-      :src="knightImage"
+      :src="knightImage()"
       :width="imagesSize()"
       :height="imagesSize()"
       @tap="selectKnight"
@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { ref, onMounted, watch } from "@vue/composition-api";
+import { computed } from "@vue/composition-api";
 export default {
   props: {
     size: {
@@ -53,26 +53,30 @@ export default {
     },
   },
   setup(props, context) {
-    const queenImage = ref("");
-    const rookImage = ref("");
-    const bishopImage = ref("");
-    const knightImage = ref("");
-
     function imagesSize() {
       return props.size * 0.2;
     }
 
-    function updatePiecesImages() {
-      queenImage.value = props.whiteTurn
+    function queenImage() {
+      return props.whiteTurn
         ? "~/components/Chessboard/vectors/wq.svg"
         : "~/components/Chessboard/vectors/bq.svg";
-      rookImage.value = props.whiteTurn
+    }
+
+    function rookImage() {
+      return props.whiteTurn
         ? "~/components/Chessboard/vectors/wr.svg"
         : "~/components/Chessboard/vectors/br.svg";
-      bishopImage.value = props.whiteTurn
+    }
+
+    function bishopImage() {
+      return props.whiteTurn
         ? "~/components/Chessboard/vectors/wb.svg"
         : "~/components/Chessboard/vectors/bb.svg";
-      knightImage.value = props.whiteTurn
+    }
+
+    function knightImage() {
+      return props.whiteTurn
         ? "~/components/Chessboard/vectors/wn.svg"
         : "~/components/Chessboard/vectors/bn.svg";
     }
@@ -92,9 +96,6 @@ export default {
     function selectKnight() {
       context.emit("selection", "n");
     }
-
-    onMounted(updatePiecesImages);
-    watch(() => props.whiteTurn, updatePiecesImages);
 
     return {
       queenImage,

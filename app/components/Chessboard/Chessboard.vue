@@ -118,6 +118,7 @@ export default {
     const dndActive = ref(false);
     const isPendingPromotion = ref(false);
     const promotionDialogActive = ref(false);
+    const pendingMovedPiece = ref(null);
 
     const cellsSize = computed(function () {
       return Math.floor((props.size * 1.0) / 9.0);
@@ -400,6 +401,7 @@ export default {
           toAlgebraic,
         });
         if (isPromotion) {
+          pendingMovedPiece.value = origin;
           isPendingPromotion.value = true;
           promotionDialogActive.value = true;
         } else {
@@ -423,14 +425,15 @@ export default {
         file: dndToFile.value,
         rank: dndToRank.value,
       });
-      const moveResult = chessLogic.value.makeMove({
+      chessLogic.value.makeMove({
         fromAlgebraic,
         toAlgebraic,
         promotionFen: promotionFen,
       });
 
       promotionDialogActive.value = false;
-      cancelDragAndDrop(origin);
+      cancelDragAndDrop(pendingMovedPiece.value);
+      pendingMovedPiece.value = null;
     }
 
     onMounted(repaintAll);
