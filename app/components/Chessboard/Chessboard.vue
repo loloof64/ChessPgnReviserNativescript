@@ -50,7 +50,7 @@
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
-import ChessBoardLogic from './ChessBoardLogic';
+import ChessBoardLogic from "./ChessBoardLogic";
 
 export default {
   props: {
@@ -87,8 +87,8 @@ export default {
     const dndActive = ref(false);
     const prevDeltaX = ref(0);
     const prevDeltaY = ref(0);
-    const dndOriginX = ref(0);
-    const dndOriginY = ref(0);
+    const dndOriginX = ref(-1000);
+    const dndOriginY = ref(-1000);
 
     const cellsSize = computed(function () {
       return Math.floor((props.size * 1.0) / 9.0);
@@ -190,7 +190,6 @@ export default {
         });
       });
     }
-    
 
     function updatePieces() {
       let newValues = [];
@@ -231,6 +230,18 @@ export default {
       updatePieces();
     }
 
+    function cancelDragAndDrop(moveObject) {
+      moveObject.set("left", dndOriginX.value);
+      moveObject.set("top", dndOriginY.value);
+      setTimeout(() => {
+        dndOriginX.value = -1000;
+        dndOriginY.value = -1000;
+        prevDeltaX.value = 0;
+        prevDeltaY.value = 0;
+        dndActive.value = false;
+      }, 0);
+    }
+
     function onPan(event) {
       const origin = event.object;
 
@@ -264,19 +275,49 @@ export default {
         const tooFarBottom = newY > cellsSize.value * 7.7;
 
         if (tooFarLeft || tooFarRight || tooFarTop || tooFarBottom) {
-          // cancel drag and drop
-          origin.set("left", dndOriginX.value);
-          origin.set("top", dndOriginY.value);
-          dndActive.value = false;
+          cancelDragAndDrop(origin);
         } else {
           prevDeltaX.value = event.deltaX;
           prevDeltaY.value = event.deltaY;
         }
       } else if (isUp) {
-        // cancel drag and drop
-        origin.set("left", dndOriginX.value);
-        origin.set("top", dndOriginY.value);
-        dndActive.value = false;
+        const x = origin.get("left");
+        const y = origin.get("top");
+
+        const fromCol = Math.floor(
+          (dndOriginX.value - cellsSize.value * 0.5) / cellsSize.value
+        );
+        const fromRow = Math.floor(
+          (dndOriginY.value - cellsSize.value * 0.5) / cellsSize.value
+        );
+        const fromFile = props.reversed ? 7 - fromCol : fromCol;
+        const fromRank = props.reversed ? fromRow : 7 - fromRow;
+
+        const col = Math.floor((x - cellsSize.value * 0.5) / cellsSize.value);
+        const row = Math.floor((y - cellsSize.value * 0.5) / cellsSize.value);
+        const file = props.reversed ? 7 - col : col;
+        const rank = props.reversed ? row : 7 - row;
+        const fromAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({
+          file: fromFile,
+          rank: fromRank,
+        });
+        const toAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({
+          file,
+          rank,
+        });
+        const validMove = chessLogic.value.isLegalMove({
+          fromAlgebraic,
+          toAlgebraic,
+        });
+        if (!validMove) cancelDragAndDrop(origin);
+
+        chessLogic.value.makeMove({
+          fromAlgebraic,
+          toAlgebraic,
+          promotionFen: null,
+        });
+        cancelDragAndDrop(origin);
+        repaintAll();
       }
     }
 
