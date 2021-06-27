@@ -50,7 +50,7 @@
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
-import Chess from "chess.js";
+import ChessBoardLogic from './ChessBoardLogic';
 
 export default {
   props: {
@@ -83,7 +83,7 @@ export default {
     const coordinates = ref([]);
     const cells = ref([]);
     const pieces = ref([]);
-    const chessLogic = ref(new Chess());
+    const chessLogic = ref(new ChessBoardLogic());
     const dndActive = ref(false);
     const prevDeltaX = ref(0);
     const prevDeltaY = ref(0);
@@ -99,7 +99,7 @@ export default {
     });
 
     const whiteTurn = computed(function () {
-      return chessLogic.value.turn() === "w";
+      return chessLogic.isWhiteTurn;
     });
 
     const playerTurnLocation = computed(function () {
@@ -199,11 +199,11 @@ export default {
         [0, 1, 2, 3, 4, 5, 6, 7].forEach((colIndex) => {
           const file = props.reversed ? 7 - colIndex : colIndex;
           const rank = props.reversed ? rowIndex : 7 - rowIndex;
-          const cellAsAlgebraic = cellCoordinatesToAlgebraic({
+          const cellAsAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({
             file,
             rank,
           });
-          const cellValue = chessLogic.value.get(cellAsAlgebraic);
+          const cellValue = chessLogic.value.getValueAtCell(cellAsAlgebraic);
           const cellHasAPiece = cellValue !== null;
 
           if (cellHasAPiece) {
@@ -229,13 +229,6 @@ export default {
       updateCoordinates();
       updateCells();
       updatePieces();
-    }
-
-    function cellCoordinatesToAlgebraic({ file, rank }) {
-      return (
-        String.fromCharCode("a".charCodeAt(0) + file) +
-        String.fromCharCode("1".charCodeAt(0) + rank)
-      );
     }
 
     function onPan(event) {
