@@ -11,9 +11,6 @@ export default class ChessBoardLogic {
   }
 
   get isWhiteTurn() {
-    ///////////////////////////
-    console.log("turn", this.logic.turn());
-    ///////////////////////////
     return this.logic.turn() === "w";
   }
 

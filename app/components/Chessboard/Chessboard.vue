@@ -38,7 +38,7 @@
 
     <Label
       text=""
-      :backgroundColor="whiteTurn ? 'white' : 'black'"
+      :backgroundColor="whiteTurn() ? 'white' : 'black'"
       :left="playerTurnLocation"
       :top="playerTurnLocation"
       :width="playerTurnSize"
@@ -98,9 +98,9 @@ export default {
       return Math.floor(cellsSize.value * 0.5);
     });
 
-    const whiteTurn = computed(function () {
-      return chessLogic.isWhiteTurn;
-    });
+    function whiteTurn() {
+      return chessLogic.value.isWhiteTurn;
+    };
 
     const playerTurnLocation = computed(function () {
       return Math.floor(cellsSize.value * 8.5);
