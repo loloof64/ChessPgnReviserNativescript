@@ -2,12 +2,14 @@
   <Page>
     <ActionBar>
       <Label text="Home" />
+      <ActionItem @tap="newGame"
+        icon="res://start"  android.position="actionBar" />
       <ActionItem @tap="reverseBoard"
         icon="res://reverse"  android.position="actionBar" />
     </ActionBar>
 
     <GridLayout>
-      <chess-board :size="boardSize" :reversed="boardReversed" />
+      <chess-board ref="board" :size="boardSize" :reversed="boardReversed" />
     </GridLayout>
   </Page>
 </template>
@@ -19,6 +21,7 @@ import { Screen, Application } from "@nativescript/core";
 export default {
   setup() {
 
+    const board = ref();
     const boardSize = ref(0);
     const boardReversed = ref(false);
 
@@ -29,6 +32,10 @@ export default {
       boardSize.value = Math.floor(
         Math.min(screenWidthDip, screenHeightDip) * sizeFactor
       );
+    }
+
+    function newGame() {
+      board.value.newGame();
     }
 
     function reverseBoard() {
@@ -43,7 +50,7 @@ export default {
       updateBoardSize();
     });
 
-    return { boardSize, boardReversed, reverseBoard };
+    return { boardSize, boardReversed, reverseBoard, newGame, board };
   },
   components: {
     ChessBoard,

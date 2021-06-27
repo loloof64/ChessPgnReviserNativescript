@@ -130,6 +130,11 @@ export default {
       return Math.floor(cellsSize.value * 0.2);
     });
 
+    function newGame() {
+      chessLogic.value = new ChessBoardLogic();
+      repaintAll();
+    }
+
     function updateCoordinates() {
       coordinates.value.splice(0, coordinates.value.length);
 
@@ -410,6 +415,7 @@ export default {
       playerTurnSize,
       playerTurnRadius,
       cellsSize,
+      newGame,
     };
   },
 };
