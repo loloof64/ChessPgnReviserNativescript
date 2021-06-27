@@ -10,6 +10,13 @@ export default class ChessBoardLogic {
     );
   }
 
+  static coordinatesFromAlgebraic(cellAlgebraic) {
+    const file = cellAlgebraic.charCodeAt(0) - "a".charCodeAt(0);
+    const rank = cellAlgebraic.charCodeAt(1) - "1".charCodeAt(0);
+
+    return { file, rank };
+  }
+
   get isWhiteTurn() {
     return this.logic.turn() === "w";
   }
@@ -20,6 +27,25 @@ export default class ChessBoardLogic {
 
   getValueAtCell(cellAlgebraic) {
     return this.logic.get(cellAlgebraic);
+  }
+
+  isPromotionMove({ fromAlgebraic, toAlgebraic }) {
+    if (!this.isLegalMove({ fromAlgebraic, toAlgebraic })) return;
+    const piece = this.getValueAtCell(fromAlgebraic);
+    if (piece?.type != "p") return;
+    const { rank: fromRank } = ChessBoardLogic.coordinatesFromAlgebraic(
+      fromAlgebraic
+    );
+    const { rank: toRank } = ChessBoardLogic.coordinatesFromAlgebraic(
+      toAlgebraic
+    );
+
+    return (
+      (this.isWhiteTurn && fromRank === 6 && toRank === 7) ||
+      (!this.isWhiteTurn &&
+        fromRank === 1 &&
+        toRank === (this.isWhiteTurn && fromRank === 6 && toRank === 0))
+    );
   }
 
   isLegalMove({ fromAlgebraic, toAlgebraic }) {

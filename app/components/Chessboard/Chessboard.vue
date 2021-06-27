@@ -45,12 +45,22 @@
       :height="playerTurnSize"
       :borderRadius="playerTurnRadius"
     />
+
+    <promotion-dialog
+      v-if="promotionDialogActive"
+      :size="size"
+      :whiteTurn="whiteTurn()"
+      left="0px"
+      top="0px"
+      @selection="commitPendingPromotion"
+    />
   </AbsoluteLayout>
 </template>
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
 import ChessBoardLogic from "./ChessBoardLogic";
+import PromotionDialog from "./PromotionDialog.vue";
 
 export default {
   props: {
@@ -91,20 +101,22 @@ export default {
       default: false,
     },
   },
+  components: {
+    PromotionDialog,
+  },
   setup(props) {
     const coordinates = ref([]);
     const cells = ref([]);
     const pieces = ref([]);
     const chessLogic = ref(new ChessBoardLogic());
-    const dndActive = ref(false);
     const prevDeltaX = ref(0);
     const prevDeltaY = ref(0);
-    const dndOriginX = ref(-1000);
-    const dndOriginY = ref(-1000);
     const dndFromFile = ref(-1000);
     const dndFromRank = ref(-1000);
     const dndToFile = ref(-1000);
     const dndToRank = ref(-1000);
+    const isPendingPromotion = ref(false);
+    const promotionDialogActive = ref(false);
 
     const cellsSize = computed(function () {
       return Math.floor((props.size * 1.0) / 9.0);
@@ -198,12 +210,15 @@ export default {
           const top = Math.floor(cellsSize.value * (0.5 + rowIndex));
           const isWhiteCell = (rowIndex + colIndex) % 2 == 0;
 
-          const file = props.reversed ? 7-colIndex : colIndex;
-          const rank = props.reversed ? rowIndex : 7-rowIndex;
+          const file = props.reversed ? 7 - colIndex : colIndex;
+          const rank = props.reversed ? rowIndex : 7 - rowIndex;
 
-          const isDndOriginCell = (file === dndFromFile.value && rank === dndFromRank.value);
-          const isDndTargetCell = (file === dndToFile.value && rank === dndToRank.value);
-          const isDndHelperCell = (file === dndToFile.value || rank === dndToRank.value);
+          const isDndOriginCell =
+            file === dndFromFile.value && rank === dndFromRank.value;
+          const isDndTargetCell =
+            file === dndToFile.value && rank === dndToRank.value;
+          const isDndHelperCell =
+            file === dndToFile.value || rank === dndToRank.value;
           let color = isWhiteCell
             ? props.whiteCellsColor
             : props.blackCellsColor;
@@ -263,20 +278,15 @@ export default {
     }
 
     function cancelDragAndDrop(moveObject) {
-      moveObject.set("left", dndOriginX.value);
-      moveObject.set("top", dndOriginY.value);
-      setTimeout(() => {
-        dndOriginX.value = -1000;
-        dndOriginY.value = -1000;
-        dndFromFile.value = -1000;
-        dndFromRank.value = -1000;
-        dndToFile.value = -1000;
-        dndToRank.value = -1000;
-        prevDeltaX.value = 0;
-        prevDeltaY.value = 0;
-        dndActive.value = false;
-        updateCells();
-      }, 0);
+      moveObject.translateX = 0;
+      moveObject.translateY = 0;
+      dndFromFile.value = -1000;
+      dndFromRank.value = -1000;
+      dndToFile.value = -1000;
+      dndToRank.value = -1000;
+      prevDeltaX.value = 0;
+      prevDeltaY.value = 0;
+      repaintAll();
     }
 
     function getColFromX(x) {
@@ -288,6 +298,8 @@ export default {
     }
 
     function onPan(event) {
+      if (promotionDialogActive.value) return;
+
       const origin = event.object;
 
       const panState = event.state;
@@ -296,37 +308,32 @@ export default {
       const isUp = panState === 3;
 
       if (isDown) {
-        dndOriginX.value = origin.get("left");
-        dndOriginY.value = origin.get("top");
-        prevDeltaX.value = event.deltaX;
-        prevDeltaY.value = event.deltaY;
+        prevDeltaX.value = 0;
+        prevDeltaY.value = 0;
 
-        const col = getColFromX(origin.get("left"));
-        const row = getColFromX(origin.get("top"));
+        const col = origin.left;
+        const row = origin.top;
 
         const file = props.reversed ? 7 - col : col;
         const rank = props.reversed ? row : 7 - row;
 
-        const cellAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({file, rank});
+        const cellAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({
+          file,
+          rank,
+        });
         if (!chessLogic.value.isPlayerInTurnPieceAtCell(cellAlgebraic)) return;
 
         dndFromFile.value = file;
         dndFromRank.value = rank;
 
         updateCells();
-
-        dndActive.value = true;
       } else if (isPanning) {
-        if (!dndActive.value) return;
+        
+        origin.translateX += event.deltaX - prevDeltaX.value;
+        origin.translateY += event.deltaY - prevDeltaY.value;
 
-        const effectiveDeltaX = event.deltaX - prevDeltaX.value;
-        const effectiveDeltaY = event.deltaY - prevDeltaY.value;
-
-        origin.set("left", origin.get("left") + effectiveDeltaX);
-        origin.set("top", origin.get("top") + effectiveDeltaY);
-
-        const newX = origin.get("left");
-        const newY = origin.get("top");
+        const newX = origin.left + origin.translateX;
+        const newY = origin.top + origin.translateY;
 
         const col = getColFromX(newX);
         const row = getColFromX(newY);
@@ -345,18 +352,20 @@ export default {
 
         if (tooFarLeft || tooFarRight || tooFarTop || tooFarBottom) {
           cancelDragAndDrop(origin);
-        } else {
-          prevDeltaX.value = event.deltaX;
-          prevDeltaY.value = event.deltaY;
-
-          updateCells();
+          return;
         }
-      } else if (isUp) {
-        const x = origin.get("left");
-        const y = origin.get("top");
 
-        const fromCol = getColFromX(dndOriginX.value);
-        const fromRow = getRowFromY(dndOriginY.value);
+        prevDeltaX.value = event.deltaX;
+        prevDeltaY.value = event.deltaY;
+
+        updateCells();
+      } else if (isUp) {
+
+        const x = origin.left + origin.translateX;
+        const y = origin.top + origin.translateY;
+
+        const fromCol = getColFromX(origin.left);
+        const fromRow = getRowFromY(origin.top);
         const fromFile = props.reversed ? 7 - fromCol : fromCol;
         const fromRank = props.reversed ? fromRow : 7 - fromRow;
 
@@ -383,14 +392,42 @@ export default {
 
         if (!validMove) cancelDragAndDrop(origin);
 
-        chessLogic.value.makeMove({
+        const isPromotion = chessLogic.value.isPromotionMove({
           fromAlgebraic,
           toAlgebraic,
-          promotionFen: null,
         });
-        cancelDragAndDrop(origin);
-        repaintAll();
+        if (isPromotion) {
+          isPendingPromotion.value = true;
+          promotionDialogActive.value = true;
+        } else {
+          chessLogic.value.makeMove({
+            fromAlgebraic,
+            toAlgebraic,
+            promotionFen: null,
+          });
+          cancelDragAndDrop(origin);
+          repaintAll();
+        }
       }
+    }
+
+    function commitPendingPromotion(promotionFen) {
+      const fromAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({
+        file: dndFromFile.value,
+        rank: dndFromRank.value,
+      });
+      const toAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({
+        file: dndToFile.value,
+        rank: dndToRank.value,
+      });
+      const moveResult = chessLogic.value.makeMove({
+        fromAlgebraic,
+        toAlgebraic,
+        promotionFen: promotionFen,
+      });
+
+      promotionDialogActive.value = false;
+      cancelDragAndDrop(origin);
     }
 
     onMounted(repaintAll);
@@ -403,11 +440,8 @@ export default {
       cells,
       pieces,
       chessLogic,
-      dndActive,
       prevDeltaX,
       prevDeltaY,
-      dndOriginX,
-      dndOriginY,
       onPan,
       coordinatesSize,
       whiteTurn,
@@ -416,6 +450,8 @@ export default {
       playerTurnRadius,
       cellsSize,
       newGame,
+      promotionDialogActive,
+      commitPendingPromotion,
     };
   },
 };
