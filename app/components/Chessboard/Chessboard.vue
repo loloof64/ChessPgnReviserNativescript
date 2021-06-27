@@ -302,6 +302,9 @@ export default {
         const file = props.reversed ? 7 - col : col;
         const rank = props.reversed ? row : 7 - row;
 
+        const cellAlgebraic = ChessBoardLogic.cellCoordinatesToAlgebraic({file, rank});
+        if (!chessLogic.value.isPlayerInTurnPieceAtCell(cellAlgebraic)) return;
+
         dndFromFile.value = file;
         dndFromRank.value = rank;
 

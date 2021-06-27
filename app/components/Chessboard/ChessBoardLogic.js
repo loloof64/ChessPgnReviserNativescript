@@ -14,6 +14,10 @@ export default class ChessBoardLogic {
     return this.logic.turn() === "w";
   }
 
+  isPlayerInTurnPieceAtCell(cellAlgebraic) {
+    return this.logic.get(cellAlgebraic)?.color === this.logic.turn();
+  }
+
   getValueAtCell(cellAlgebraic) {
     return this.logic.get(cellAlgebraic);
   }
