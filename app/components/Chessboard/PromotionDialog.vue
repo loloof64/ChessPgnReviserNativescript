@@ -45,7 +45,7 @@ export default {
   props: {
     size: {
       type: Number,
-      default: "50",
+      default: 50,
     },
     whiteTurn: {
       type: Boolean,

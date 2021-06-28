@@ -66,7 +66,7 @@ export default {
   props: {
     size: {
       type: Number,
-      default: "50",
+      default: 50,
     },
     backgroundColor: {
       type: String,
@@ -116,9 +116,8 @@ export default {
     const dndToFile = ref(-1000);
     const dndToRank = ref(-1000);
     const dndActive = ref(false);
-    const isPendingPromotion = ref(false);
     const promotionDialogActive = ref(false);
-    const pendingMovedPiece = ref(null);
+    let pendingMovedPiece = undefined;
 
     const cellsSize = computed(function () {
       return Math.floor((props.size * 1.0) / 9.0);
@@ -401,8 +400,7 @@ export default {
           toAlgebraic,
         });
         if (isPromotion) {
-          pendingMovedPiece.value = origin;
-          isPendingPromotion.value = true;
+          pendingMovedPiece = origin;
           promotionDialogActive.value = true;
         } else {
           chessLogic.value.makeMove({
@@ -432,8 +430,8 @@ export default {
       });
 
       promotionDialogActive.value = false;
-      cancelDragAndDrop(pendingMovedPiece.value);
-      pendingMovedPiece.value = null;
+      cancelDragAndDrop(pendingMovedPiece);
+      pendingMovedPiece = undefined;
     }
 
     onMounted(repaintAll);
