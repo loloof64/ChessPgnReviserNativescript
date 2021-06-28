@@ -1,7 +1,12 @@
 import Chess from "chess.js";
 
+const EMPTY_POSITION_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
+
 export default class ChessBoardLogic {
-  logic = new Chess();
+  
+  constructor(positionFen = EMPTY_POSITION_FEN) {
+    this.logic = new Chess(positionFen);
+  }
 
   static cellCoordinatesToAlgebraic({ file, rank }) {
     return (
@@ -72,5 +77,25 @@ export default class ChessBoardLogic {
       });
       return result;
     }
+  }
+
+  get isCheckmate() {
+    return this.logic.in_checkmate();
+  }
+
+  get isStalemate() {
+    return this.logic.in_stalemate();
+  }
+
+  get isInThreeFoldRepetition() {
+    return this.logic.in_threefold_repetition();
+  }
+
+  get isInsufficientMaterial() {
+    return this.logic.insufficient_material();
+  }
+
+  get isFiftyMovesDraw() {
+    return !this.logic.insufficient_material() && this.logic.in_draw();
   }
 }

@@ -104,7 +104,7 @@ export default {
   components: {
     PromotionDialog,
   },
-  setup(props) {
+  setup(props, context) {
     const coordinates = ref([]);
     const cells = ref([]);
     const pieces = ref([]);
@@ -117,6 +117,7 @@ export default {
     const dndToRank = ref(-1000);
     const dndActive = ref(false);
     const promotionDialogActive = ref(false);
+    const gameInProgress = ref(false);
     let pendingMovedPiece = undefined;
 
     const cellsSize = computed(function () {
@@ -144,7 +145,10 @@ export default {
     });
 
     function newGame() {
-      chessLogic.value = new ChessBoardLogic();
+      const DEFAULT_FEN =
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+      chessLogic.value = new ChessBoardLogic(DEFAULT_FEN);
+      gameInProgress.value = true;
       repaintAll();
     }
 
@@ -299,7 +303,28 @@ export default {
       return Math.floor(y / cellsSize.value);
     }
 
+    function emitGameFinishedIfPossible() {
+      if (chessLogic.value.isCheckmate) {
+        const whiteTurnBeforeMove = !chessLogic.value.isWhiteTurn;
+        gameInProgress.value = false;
+        context.emit("checkmate", whiteTurnBeforeMove);
+      } else if (chessLogic.value.isStalemate) {
+        gameInProgress.value = false;
+        context.emit("stalemate");
+      } else if (chessLogic.value.isInThreeFoldRepetition) {
+        gameInProgress.value = false;
+        context.emit("threeFoldRepetition");
+      } else if (chessLogic.value.isInsufficientMaterial) {
+        gameInProgress.value = false;
+        context.emit("insufficientMaterial");
+      } else if (chessLogic.value.isFiftyMovesDraw) {
+        gameInProgress.value = false;
+        context.emit("fityMovesDraw");
+      }
+    }
+
     function onPan(event) {
+      if (!gameInProgress.value) return;
       if (promotionDialogActive.value) return;
 
       const origin = event.object;
@@ -410,6 +435,7 @@ export default {
           });
           cancelDragAndDrop(origin);
           repaintAll();
+          emitGameFinishedIfPossible();
         }
       }
     }
@@ -432,6 +458,7 @@ export default {
       promotionDialogActive.value = false;
       cancelDragAndDrop(pendingMovedPiece);
       pendingMovedPiece = undefined;
+      emitGameFinishedIfPossible();
     }
 
     onMounted(repaintAll);

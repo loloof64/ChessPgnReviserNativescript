@@ -15,7 +15,16 @@
     </ActionBar>
 
     <GridLayout>
-      <chess-board ref="board" :size="boardSize" :reversed="boardReversed" />
+      <chess-board
+        ref="board"
+        :size="boardSize"
+        :reversed="boardReversed"
+        @checkmate="handleCheckmate"
+        @stalemate="handleStalemate"
+        @threeFoldRepetition="handleThreeFoldRepetition"
+        @insufficientMaterial="handleInsufficientMaterial"
+        @fityMovesDraw="handleFiftyMovesDraw"
+      />
     </GridLayout>
   </Page>
 </template>
@@ -47,6 +56,27 @@ export default {
       boardReversed.value = !boardReversed.value;
     }
 
+    function handleCheckmate(whiteTurnBeforeMove) {
+      const side = whiteTurnBeforeMove ? "White" : "Black";
+      alert(`${side} has won by checkmate !`);
+    }
+
+    function handleStalemate() {
+      alert("Draw by stalemate !");
+    }
+
+    function handleThreeFoldRepetition() {
+      alert("Draw by three-fold repetition !");
+    }
+
+    function handleInsufficientMaterial() {
+      alert("Draw by insufficient material !");
+    }
+
+    function handleFiftyMovesDraw() {
+      alert("Draw by the 50 moves rule !");
+    }
+
     Application.on(Application.orientationChangedEvent, () => {
       updateBoardSize();
     });
@@ -55,7 +85,18 @@ export default {
       updateBoardSize();
     });
 
-    return { boardSize, boardReversed, reverseBoard, newGame, board };
+    return {
+      boardSize,
+      boardReversed,
+      reverseBoard,
+      newGame,
+      board,
+      handleCheckmate,
+      handleStalemate,
+      handleThreeFoldRepetition,
+      handleInsufficientMaterial,
+      handleFiftyMovesDraw,
+    };
   },
   components: {
     ChessBoard,
