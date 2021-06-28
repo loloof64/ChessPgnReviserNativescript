@@ -418,7 +418,10 @@ export default {
           toAlgebraic,
         });
 
-        if (!validMove) cancelDragAndDrop(origin);
+        if (!validMove) {
+          cancelDragAndDrop(origin);
+          return;
+        }
 
         const isPromotion = chessLogic.value.isPromotionMove({
           fromAlgebraic,
@@ -428,12 +431,19 @@ export default {
           pendingMovedPiece = origin;
           promotionDialogActive.value = true;
         } else {
-          chessLogic.value.makeMove({
+          const moveData = chessLogic.value.makeMove({
             fromAlgebraic,
             toAlgebraic,
             promotionFen: null,
           });
           cancelDragAndDrop(origin);
+          context.emit("move-done", {
+            moveFan: ChessBoardLogic.convertSanToFan({
+              moveSan: moveData.san,
+              whiteMove: !chessLogic.value.isWhiteTurn,
+            }),
+            whiteMove: !chessLogic.value.isWhiteTurn,
+          });
           repaintAll();
           emitGameFinishedIfPossible();
         }
@@ -449,7 +459,7 @@ export default {
         file: dndToFile.value,
         rank: dndToRank.value,
       });
-      chessLogic.value.makeMove({
+      const moveData = chessLogic.value.makeMove({
         fromAlgebraic,
         toAlgebraic,
         promotionFen: promotionFen,
@@ -458,6 +468,14 @@ export default {
       promotionDialogActive.value = false;
       cancelDragAndDrop(pendingMovedPiece);
       pendingMovedPiece = undefined;
+
+      context.emit("move-done", {
+        moveFan: ChessBoardLogic.convertSanToFan({
+          moveSan: moveData.san,
+          whiteMove: !chessLogic.value.isWhiteTurn,
+        }),
+      });
+
       emitGameFinishedIfPossible();
     }
 

@@ -28,8 +28,9 @@
         @threeFoldRepetition="handleThreeFoldRepetition"
         @insufficientMaterial="handleInsufficientMaterial"
         @fityMovesDraw="handleFiftyMovesDraw"
+        @move-done="handleMoveDone"
       />
-      <history :width="historyWidth" :height="historyHeight" />
+      <history ref="history" :width="historyWidth" :height="historyHeight" />
     </FlexBoxLayout>
   </Page>
 </template>
@@ -39,9 +40,11 @@ import { ref, onMounted } from "@vue/composition-api";
 import ChessBoard from "./Chessboard/Chessboard.vue";
 import History from "./History/History.vue";
 import { Screen, Application } from "@nativescript/core";
+import ChessBoardLogic from './Chessboard/ChessBoardLogic';
 export default {
   setup() {
     const board = ref();
+    const history = ref();
     const boardSize = ref(0);
     const boardReversed = ref(false);
     const mainZoneDirection = ref("column");
@@ -80,6 +83,7 @@ export default {
     }
 
     function newGame() {
+      history.value.clear();
       board.value.newGame();
     }
 
@@ -108,6 +112,10 @@ export default {
       alert("Draw by the 50 moves rule !");
     }
 
+    function handleMoveDone({moveFan, whiteMove}) {
+      history.value.addMove({moveFan});
+    }
+
     Application.on(Application.orientationChangedEvent, () => {
       updateMainZoneDirection();
       updateBoardSize();
@@ -126,11 +134,13 @@ export default {
       reverseBoard,
       newGame,
       board,
+      history,
       handleCheckmate,
       handleStalemate,
       handleThreeFoldRepetition,
       handleInsufficientMaterial,
       handleFiftyMovesDraw,
+      handleMoveDone,
       mainZoneDirection,
       historyWidth,
       historyHeight,

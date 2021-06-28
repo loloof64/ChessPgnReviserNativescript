@@ -1,9 +1,22 @@
 import Chess from "chess.js";
 
 const EMPTY_POSITION_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
+const PIECES_CHARS = [
+  "P",
+  "N",
+  "B",
+  "R",
+  "Q",
+  "K",
+  "p",
+  "n",
+  "b",
+  "r",
+  "q",
+  "k"
+];
 
 export default class ChessBoardLogic {
-  
   constructor(positionFen = EMPTY_POSITION_FEN) {
     this.logic = new Chess(positionFen);
   }
@@ -20,6 +33,42 @@ export default class ChessBoardLogic {
     const rank = cellAlgebraic.charCodeAt(1) - "1".charCodeAt(0);
 
     return { file, rank };
+  }
+
+  static convertSanToFan({ moveSan, whiteMove }) {
+    let moveFan = moveSan;
+    const firstPieceIndex = moveFan.indexOf(elt =>
+      PIECES_CHARS.includes(elt)
+    );
+    if (firstPieceIndex >= 0) {
+      const firstPart = moveFan.substring(0, firstPieceIndex);
+      let middlePart;
+      const lastPart = moveFan.substring(firstPieceIndex + 1);
+      const charToConvert = moveFan.charAt(firstPieceIndex).toLowerCase();
+
+      switch (charToConvert) {
+        case "k":
+          middlePart = whiteMove ? "\u2654" : "\u265a";
+          break;
+        case "q":
+          middlePart = whiteMove ? "\u2655" : "\u265b";
+          break;
+        case "r":
+          middlePart = whiteMove ? "\u2656" : "\u265c";
+          break;
+        case "b":
+          middlePart = whiteMove ? "\u2657" : "\u265d";
+          break;
+        case "n":
+          middlePart = whiteMove ? "\u2658" : "\u265e";
+          break;
+        default:
+          throw "Not a recognized piece " + charToConvert + " !";
+      }
+
+      moveFan = firstPart + middlePart + lastPart;
+    }
+    return moveFan;
   }
 
   get isWhiteTurn() {
