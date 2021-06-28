@@ -14,7 +14,11 @@
       />
     </ActionBar>
 
-    <GridLayout>
+    <FlexBoxLayout
+      :flexDirection="mainZoneDirection"
+      justifyContent="flex-start"
+      alignItems="center"
+    >
       <chess-board
         ref="board"
         :size="boardSize"
@@ -25,19 +29,24 @@
         @insufficientMaterial="handleInsufficientMaterial"
         @fityMovesDraw="handleFiftyMovesDraw"
       />
-    </GridLayout>
+      <history :width="historyWidth" :height="historyHeight" />
+    </FlexBoxLayout>
   </Page>
 </template>
 
 <script>
 import { ref, onMounted } from "@vue/composition-api";
 import ChessBoard from "./Chessboard/Chessboard.vue";
+import History from "./History/History.vue";
 import { Screen, Application } from "@nativescript/core";
 export default {
   setup() {
     const board = ref();
     const boardSize = ref(0);
     const boardReversed = ref(false);
+    const mainZoneDirection = ref("column");
+    const historyWidth = ref(0);
+    const historyHeight = ref(0);
 
     function updateBoardSize() {
       const screenWidthDip = Screen.mainScreen.widthDIPs;
@@ -46,6 +55,28 @@ export default {
       boardSize.value = Math.floor(
         Math.min(screenWidthDip, screenHeightDip) * sizeFactor
       );
+    }
+
+    function updateMainZoneDirection() {
+      const newOrientation =
+        Application.orientation() === "portrait" ? "column" : "row";
+      mainZoneDirection.value = newOrientation;
+    }
+
+    function updateHistorySize() {
+      const isPortrait = Application.orientation() === "portrait";
+      const screenWidthDip = Screen.mainScreen.widthDIPs;
+      const screenHeightDip = Screen.mainScreen.heightDIPs;
+
+      const minDimension = screenWidthDip < screenHeightDip ? screenWidthDip : screenHeightDip;
+      const maxDimension = screenWidthDip > screenHeightDip ? screenWidthDip : screenHeightDip;
+
+      historyWidth.value = isPortrait
+        ? boardSize.value
+        : maxDimension - boardSize.value;
+      historyHeight.value = isPortrait
+        ? (maxDimension - boardSize.value) * 0.65
+        : boardSize.value;
     }
 
     function newGame() {
@@ -78,11 +109,15 @@ export default {
     }
 
     Application.on(Application.orientationChangedEvent, () => {
+      updateMainZoneDirection();
       updateBoardSize();
+      updateHistorySize();
     });
 
     onMounted(() => {
+      updateMainZoneDirection();
       updateBoardSize();
+      updateHistorySize();
     });
 
     return {
@@ -96,10 +131,14 @@ export default {
       handleThreeFoldRepetition,
       handleInsufficientMaterial,
       handleFiftyMovesDraw,
+      mainZoneDirection,
+      historyWidth,
+      historyHeight,
     };
   },
   components: {
     ChessBoard,
+    History,
   },
 };
 </script>
