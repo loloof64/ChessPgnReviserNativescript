@@ -37,9 +37,14 @@ export default class ChessBoardLogic {
 
   static convertSanToFan({ moveSan, whiteMove }) {
     let moveFan = moveSan;
-    const firstPieceIndex = moveFan.indexOf(elt =>
-      PIECES_CHARS.includes(elt)
-    );
+    let firstPieceIndex = -1;
+    for (let i = 0; i<moveFan.length; i++) {
+      const elt = moveFan.charAt(i);
+      if(PIECES_CHARS.includes(elt.toUpperCase())) {
+        firstPieceIndex = i;
+        break;
+      }
+    }
     if (firstPieceIndex >= 0) {
       const firstPart = moveFan.substring(0, firstPieceIndex);
       let middlePart;
