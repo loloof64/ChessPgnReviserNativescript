@@ -1,52 +1,67 @@
 <template>
-  <AbsoluteLayout
-    :backgroundColor="backgroundColor"
-    :width="size"
-    :height="size"
-  >
-    <Label
-      v-for="coordData in coordinates"
-      :key="coordData.key"
-      :text="coordData.text"
-      :fontSize="coordinatesSize"
-      :left="coordData.left"
-      :top="coordData.top"
-      :color="coordinatesColor"
-      fontWeight="bold"
-    />
-    <Label
-      v-for="cellData in cells"
-      :key="cellData.key"
-      text=""
-      :left="cellData.left"
-      :top="cellData.top"
-      :width="cellsSize"
-      :height="cellsSize"
-      :backgroundColor="cellData.color"
-    />
+  <GridLayout :width="size" :heght="size">
+    <AbsoluteLayout
+      :backgroundColor="backgroundColor"
+      :width="size"
+      :height="size"
+      col="0"
+      row="0"
+    >
+      <Label
+        v-for="coordData in coordinates"
+        :key="coordData.key"
+        :text="coordData.text"
+        :fontSize="coordinatesSize"
+        :left="coordData.left"
+        :top="coordData.top"
+        :color="coordinatesColor"
+        fontWeight="bold"
+      />
+      <Label
+        v-for="cellData in cells"
+        :key="cellData.key"
+        text=""
+        :left="cellData.left"
+        :top="cellData.top"
+        :width="cellsSize"
+        :height="cellsSize"
+        :backgroundColor="cellData.color"
+      />
 
-    <SVGImage
-      v-for="piece in pieces"
-      :key="piece.key"
-      :src="piece.pieceRef"
-      :left="piece.left"
-      :top="piece.top"
-      :width="cellsSize"
-      :height="cellsSize"
-      @pan="onPan"
-    />
+      <Label
+        text=""
+        :backgroundColor="whiteTurn() ? 'white' : 'black'"
+        :left="playerTurnLocation"
+        :top="playerTurnLocation"
+        :width="playerTurnSize"
+        :height="playerTurnSize"
+        :borderRadius="playerTurnRadius"
+      />
+    </AbsoluteLayout>
 
-    <Label
-      text=""
-      :backgroundColor="whiteTurn() ? 'white' : 'black'"
-      :left="playerTurnLocation"
-      :top="playerTurnLocation"
-      :width="playerTurnSize"
-      :height="playerTurnSize"
-      :borderRadius="playerTurnRadius"
-    />
+    <AbsoluteLayout
+      :backgroundColor="transparent"
+      :width="size"
+      :height="size"
+      col="0"
+      row="0"
+    >
+
+      <SVGImage
+        v-for="piece in pieces"
+        :key="piece.key"
+        :src="piece.pieceRef"
+        :left="piece.left"
+        :top="piece.top"
+        :width="cellsSize"
+        :height="cellsSize"
+        @pan="onPan"
+      />
+    </AbsoluteLayout>
 
     <promotion-dialog
+      col="0"
+      row="0"
       v-if="promotionDialogActive"
       :size="size"
       :whiteTurn="whiteTurn()"
@@ -54,7 +69,7 @@
       top="0px"
       @selection="commitPendingPromotion"
     />
-  </AbsoluteLayout>
+  </GridLayout>
 </template>
 
 <script>
