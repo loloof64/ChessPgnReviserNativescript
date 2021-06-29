@@ -1,5 +1,5 @@
 <template>
-  <GridLayout :width="size" :heght="size">
+  <GridLayout columns="auto" rows="auto"> 
     <AbsoluteLayout
       :backgroundColor="backgroundColor"
       :width="size"
@@ -39,6 +39,8 @@
       />
     </AbsoluteLayout>
 
+    <CanvasView :width="width" :height="height" @draw="drawArrow" />
+
     <AbsoluteLayout
       :backgroundColor="transparent"
       :width="size"
@@ -46,7 +48,6 @@
       col="0"
       row="0"
     >
-
       <SVGImage
         v-for="piece in pieces"
         :key="piece.key"
@@ -74,6 +75,8 @@
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
+import { Paint } from "@nativescript-community/ui-canvas";
+import { Color } from "@nativescript/core";
 import ChessBoardLogic from "./ChessBoardLogic";
 import PromotionDialog from "./PromotionDialog.vue";
 
@@ -494,6 +497,13 @@ export default {
       emitGameFinishedIfPossible();
     }
 
+    function drawArrow({ canvas }) {
+      const paint = new Paint();
+      paint.strokeWidth = cellsSize.value * 0.2;
+      paint.setColor(new Color("lightblue"));
+      canvas.drawLine(0, 0, props.size, props.size, paint);
+    }
+
     onMounted(repaintAll);
 
     watch(() => props.reversed, repaintAll);
@@ -516,6 +526,7 @@ export default {
       newGame,
       promotionDialogActive,
       commitPendingPromotion,
+      drawArrow,
     };
   },
 };

@@ -40,7 +40,6 @@ import { ref, onMounted } from "@vue/composition-api";
 import ChessBoard from "./Chessboard/Chessboard.vue";
 import History from "./History/History.vue";
 import { Screen, Application } from "@nativescript/core";
-import ChessBoardLogic from './Chessboard/ChessBoardLogic';
 export default {
   setup() {
     const board = ref();
@@ -71,14 +70,13 @@ export default {
       const screenWidthDip = Screen.mainScreen.widthDIPs;
       const screenHeightDip = Screen.mainScreen.heightDIPs;
 
-      const minDimension = screenWidthDip < screenHeightDip ? screenWidthDip : screenHeightDip;
       const maxDimension = screenWidthDip > screenHeightDip ? screenWidthDip : screenHeightDip;
 
       historyWidth.value = isPortrait
         ? boardSize.value
         : (maxDimension - boardSize.value) * 0.90;
       historyHeight.value = isPortrait
-        ? (maxDimension - boardSize.value) * 0.60
+        ? (maxDimension - boardSize.value) * 0.6
         : boardSize.value;
     }
 

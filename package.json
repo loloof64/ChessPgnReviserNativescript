@@ -37,6 +37,7 @@
     "category-general"
   ],
   "dependencies": {
+    "@nativescript-community/ui-canvas": "^4.0.49",
     "@nativescript/core": "~8.0.0",
     "@nativescript/theme": "~3.0.1",
     "@sergeymell/nativescript-svg": "^1.1.1",
