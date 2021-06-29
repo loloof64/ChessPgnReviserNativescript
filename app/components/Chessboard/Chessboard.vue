@@ -307,6 +307,7 @@ export default {
       updateCoordinates();
       updateCells();
       updatePieces();
+      if (arrowZone.value?.nativeView) arrowZone.value.nativeView.redraw();
     }
 
     function cancelDragAndDrop(moveObject) {
