@@ -1,5 +1,5 @@
 <template>
-  <GridLayout columns="auto" rows="auto"> 
+  <GridLayout columns="auto" rows="auto">
     <AbsoluteLayout
       :backgroundColor="backgroundColor"
       :width="size"
@@ -39,7 +39,13 @@
       />
     </AbsoluteLayout>
 
-    <CanvasView :width="width" :height="height" @draw="drawArrow" />
+    <CanvasView
+      v-if="lastMoveArrow"
+      :width="width"
+      :height="height"
+      @draw="drawArrow"
+      ref="arrowZone"
+    />
 
     <AbsoluteLayout
       :backgroundColor="transparent"
@@ -75,7 +81,7 @@
 
 <script>
 import { computed, ref, onMounted, watch } from "@vue/composition-api";
-import { Paint } from "@nativescript-community/ui-canvas";
+import { createRect, Paint, Style } from "@nativescript-community/ui-canvas";
 import { Color } from "@nativescript/core";
 import ChessBoardLogic from "./ChessBoardLogic";
 import PromotionDialog from "./PromotionDialog.vue";
@@ -136,6 +142,8 @@ export default {
     const dndActive = ref(false);
     const promotionDialogActive = ref(false);
     const gameInProgress = ref(false);
+    const lastMoveArrow = ref(undefined);
+    const arrowZone = ref();
     let pendingMovedPiece = undefined;
 
     const cellsSize = computed(function () {
@@ -165,6 +173,7 @@ export default {
     function newGame() {
       const DEFAULT_FEN =
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+      lastMoveArrow.value = undefined;
       chessLogic.value = new ChessBoardLogic(DEFAULT_FEN);
       gameInProgress.value = true;
       repaintAll();
@@ -454,6 +463,12 @@ export default {
             toAlgebraic,
             promotionFen: null,
           });
+          lastMoveArrow.value = {
+            fromFile: dndFromFile.value,
+            fromRank: dndFromRank.value,
+            toFile: dndToFile.value,
+            toRank: dndToRank.value,
+          };
           cancelDragAndDrop(origin);
           context.emit("move-done", {
             moveFan: ChessBoardLogic.convertSanToFan({
@@ -483,6 +498,13 @@ export default {
         promotionFen: promotionFen,
       });
 
+      lastMoveArrow.value = {
+        fromFile: dndFromFile.value,
+        fromRank: dndFromRank.value,
+        toFile: dndToFile.value,
+        toRank: dndToRank.value,
+      };
+
       promotionDialogActive.value = false;
       cancelDragAndDrop(pendingMovedPiece);
       pendingMovedPiece = undefined;
@@ -499,9 +521,52 @@ export default {
 
     function drawArrow({ canvas }) {
       const paint = new Paint();
+      paint.setColor(new Color("transparent"));
+      paint.setStyle(Style.FILL);
+      canvas.drawRect(createRect(0, 0, props.size, props.size), paint);
+      
+      if (!lastMoveArrow.value) return;
       paint.strokeWidth = cellsSize.value * 0.2;
       paint.setColor(new Color("lightblue"));
-      canvas.drawLine(0, 0, props.size, props.size, paint);
+
+      const realOriginCol = props.reversed
+        ? 7 - lastMoveArrow.value.fromFile
+        : lastMoveArrow.value.fromFile;
+      const realOriginRow = props.reversed
+        ? lastMoveArrow.value.fromRank
+        : 7 - lastMoveArrow.value.fromRank;
+      const realDestCol = props.reversed
+        ? 7 - lastMoveArrow.value.toFile
+        : lastMoveArrow.value.toFile;
+      const realDestRow = props.reversed
+        ? lastMoveArrow.value.toRank
+        : 7 - lastMoveArrow.value.toRank;
+      const baseStartX = cellsSize.value * (1.0 + realOriginCol);
+      const baseStartY = cellsSize.value * (1.0 + realOriginRow);
+      const baseStopX = cellsSize.value * (1.0 + realDestCol);
+      const baseStopY = cellsSize.value * (1.0 + realDestRow);
+      const deltaX = baseStopX - baseStartX;
+      const deltaY = baseStopY - baseStartY;
+      const baseLineAngleRad = Math.atan2(deltaY, deltaX);
+      const edge1AngleRad = baseLineAngleRad + 2.618;
+      const edge2AngleRad = baseLineAngleRad + 3.665;
+      const edge1StartX = baseStopX;
+      const edge1StartY = baseStopY;
+      const edge1StopX =
+        baseStopX + cellsSize.value * Math.cos(edge1AngleRad) * 0.6;
+      const edge1StopY =
+        baseStopY + cellsSize.value * Math.sin(edge1AngleRad) * 0.6;
+
+      const edge2StartX = baseStopX;
+      const edge2StartY = baseStopY;
+      const edge2StopX =
+        baseStopX + cellsSize.value * Math.cos(edge2AngleRad) * 0.6;
+      const edge2StopY =
+        baseStopY + cellsSize.value * Math.sin(edge2AngleRad) * 0.6;
+
+      canvas.drawLine(baseStartX, baseStartY, baseStopX, baseStopY, paint);
+      canvas.drawLine(edge1StartX, edge1StartY, edge1StopX, edge1StopY, paint);
+      canvas.drawLine(edge2StartX, edge2StartY, edge2StopX, edge2StopY, paint);
     }
 
     onMounted(repaintAll);
@@ -527,6 +592,8 @@ export default {
       promotionDialogActive,
       commitPendingPromotion,
       drawArrow,
+      lastMoveArrow,
+      arrowZone,
     };
   },
 };
