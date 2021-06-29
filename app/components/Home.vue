@@ -76,9 +76,9 @@ export default {
 
       historyWidth.value = isPortrait
         ? boardSize.value
-        : maxDimension - boardSize.value;
+        : (maxDimension - boardSize.value) * 0.90;
       historyHeight.value = isPortrait
-        ? (maxDimension - boardSize.value) * 0.65
+        ? (maxDimension - boardSize.value) * 0.60
         : boardSize.value;
     }
 
