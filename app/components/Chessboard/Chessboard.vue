@@ -570,6 +570,7 @@ export default {
       this.chessLogic.load(item.fenAfterMove);
       this.lastMoveArrow = item.lastMoveArrow;
       this.repaintAll();
+      this.$emit('position-selected', item.index);
     },
 
     stopGame: function() {

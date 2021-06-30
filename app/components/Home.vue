@@ -35,6 +35,7 @@
         @insufficientMaterial="handleInsufficientMaterial"
         @fityMovesDraw="handleFiftyMovesDraw"
         @move-done="handleMoveDone"
+        @position-selected="handlePositionSelected"
       />
       <history
         ref="history"
@@ -140,6 +141,10 @@ export default {
       board.value.positionRequest(item);
     }
 
+    function handlePositionSelected(index) {
+      history.value.handlePositionSelectedOnBoard(index);
+    }
+
     async function stopGame() {
       if (!board.value.gameIsInProgress()) return;
       const confirmed = await confirm(
@@ -179,6 +184,7 @@ export default {
       historyWidth,
       historyHeight,
       handlePositionRequest,
+      handlePositionSelected,
       stopGame,
     };
   },

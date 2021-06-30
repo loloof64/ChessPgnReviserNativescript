@@ -7,7 +7,7 @@
           :key="index"
           :text="item.text"
           @tap="() => handleItemClick(index)"
-          backgroundColor="transparent"
+          :backgroundColor="getBackground(index)"
           margin="0px"
           fontSize="26.3em"
         />
@@ -20,8 +20,13 @@
 <script>
 export default {
   props: {
+
     items: {
       type: Array,
+      required: true,
+    },
+    selectedIndex: {
+      type: Number,
       required: true,
     },
   },
@@ -29,8 +34,9 @@ export default {
     function handleItemClick(index) {
       const selectedItem = props.items[index];
       if (selectedItem.fenAfterMove) {
-        context.emit('position-request', {
-          ...selectedItem, index,
+        context.emit("position-request", {
+          ...selectedItem,
+          index,
         });
       }
     }
@@ -39,9 +45,17 @@ export default {
       return props.items[index].fenAfterMove !== undefined;
     }
 
+    function getBackground(index) {
+      ///////////////////
+      console.log(index, props.selectedIndex);
+      /////////////////////
+      return props.selectedIndex === index ? "lightgreen" : "transparent";
+    }
+
     return {
       handleItemClick,
       hasPosition,
+      getBackground,
     };
   },
 };
