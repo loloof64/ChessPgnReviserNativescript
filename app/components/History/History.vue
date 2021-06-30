@@ -1,11 +1,11 @@
 <template>
   <FlexBoxLayout flexDirection="column" :width="width" :height="height">
-      <history-zone :items="items"/>
+    <history-zone :items="items" />
   </FlexBoxLayout>
 </template>
 
 <script>
-import { reactive } from "@vue/composition-api";
+import { reactive, ref } from "@vue/composition-api";
 import HistoryZone from "./HistoryZone.vue";
 export default {
   props: {
@@ -19,22 +19,41 @@ export default {
     },
   },
   setup() {
-    const items = reactive([
-      
-    ]);
+    const items = reactive([]);
 
-    function clear() {
-        items.splice(0, items.length);
+    const whiteMove = ref(true);
+    const moveNumber = ref(1);
+
+    function moveNumberString(num, whiteMove) {
+      return `${num}.${whiteMove ? "" : ".."}`;
     }
 
-    function addMove({moveFan, fenAfterMove}) {
+    function newGame() {
+      whiteMove.value = true;
+      moveNumber.value = 1;
+      items.splice(0, items.length);
+
+      items.push({
+        text: moveNumberString(moveNumber.value, whiteMove.value),
+      });
+    }
+
+    function addMove({ moveFan, fenAfterMove }) {
+      items.push({
+        text: moveFan,
+        fenAfterMove,
+      });
+      whiteMove.value = !whiteMove.value;
+
+      if (whiteMove.value) {
+        moveNumber.value += 1;
         items.push({
-            text: moveFan,
-            fenAfterMove,
+          text: moveNumberString(moveNumber.value, whiteMove.value),
         });
+      }
     }
 
-    return { items, addMove, clear };
+    return { items, addMove, newGame };
   },
   components: {
     HistoryZone,

@@ -1,15 +1,18 @@
 <template>
   <ScrollView orientation="vertical">
     <WrapLayout orientation="horizontal">
-      <Button
-        v-for="(item, index) in items"
-        :key="index"
-        :text="item.text"
-        @tap="() => handleItemClick(index)"
-        backgroundColor="transparent"
-        margin="0px"
-        fontSize="26.3em"
-      />
+      <template v-for="(item, index) in items">
+        <Button
+          v-if="hasPosition(index)"
+          :key="index"
+          :text="item.text"
+          @tap="() => handleItemClick(index)"
+          backgroundColor="transparent"
+          margin="0px"
+          fontSize="26.3em"
+        />
+        <Label v-else :key="index" :text="item.text" fontSize="30em" />
+      </template>
     </WrapLayout>
   </ScrollView>
 </template>
@@ -30,8 +33,13 @@ export default {
       }
     }
 
+    function hasPosition(index) {
+      return props.items[index].fenAfterMove !== undefined;
+    }
+
     return {
       handleItemClick,
+      hasPosition,
     };
   },
 };

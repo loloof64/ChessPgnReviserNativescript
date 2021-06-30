@@ -81,7 +81,7 @@ export default {
     }
 
     function newGame() {
-      history.value.clear();
+      history.value.newGame();
       board.value.newGame();
     }
 
