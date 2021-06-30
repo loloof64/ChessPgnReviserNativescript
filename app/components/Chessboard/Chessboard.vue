@@ -581,6 +581,9 @@ export default {
 
     gameIsInProgress: function() {
       return this.gameInProgress;
+    },
+    fen: function() {
+      return this.chessLogic.fen;
     }
   },
 

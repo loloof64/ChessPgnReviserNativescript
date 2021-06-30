@@ -51,6 +51,7 @@ import { ref, onMounted } from "@vue/composition-api";
 import ChessBoard from "./Chessboard/Chessboard.vue";
 import History from "./History/History.vue";
 import { Screen, Application } from "@nativescript/core";
+import { EMPTY_POSITION_FEN } from './Chessboard/ChessBoardLogic';
 export default {
   setup() {
     const board = ref();
@@ -92,9 +93,18 @@ export default {
         : boardSize.value;
     }
 
-    function newGame() {
+    function doStartNewGame() {
       history.value.newGame();
       board.value.newGame();
+    }
+
+    async function newGame() {
+      if (board.value.fen() === EMPTY_POSITION_FEN) {
+        doStartNewGame();
+        return;
+      }
+      const confirmed = await confirm('Do you really want to cancel current game and start a new one ?');
+      if (confirmed) doStartNewGame();
     }
 
     function reverseBoard() {

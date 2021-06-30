@@ -1,6 +1,6 @@
 import Chess from "chess.js";
 
-const EMPTY_POSITION_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
+export const EMPTY_POSITION_FEN = "8/8/8/8/8/8/8/8 w - - 0 1";
 const PIECES_CHARS = [
   "P",
   "N",
