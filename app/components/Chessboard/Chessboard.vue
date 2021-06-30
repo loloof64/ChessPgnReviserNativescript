@@ -76,6 +76,7 @@
       left="0px"
       top="0px"
       @selection="commitPendingPromotion"
+      @cancelation="cancelPendingPromotion"
     />
   </GridLayout>
 </template>
@@ -553,6 +554,12 @@ export default {
 
       this.emitGameFinishedIfPossible();
     },
+
+    cancelPendingPromotion: function() {
+      this.promotionDialogActive = false;
+      this.cancelDragAndDrop(this.pendingMovedPiece);
+      this.pendingMovedPiece = undefined;
+    }
   },
 
   computed: {

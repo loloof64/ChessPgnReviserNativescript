@@ -36,6 +36,14 @@
       :height="imagesSize()"
       @tap="selectKnight"
     />
+
+    <SVGImage
+      class="button"
+      src="~/components/Chessboard/vectors/cancel.svg"
+      :width="imagesSize()"
+      :height="imagesSize()"
+      @tap="cancelPromotion"
+    />
   </FlexBoxLayout>
 </template>
 
@@ -54,7 +62,7 @@ export default {
   },
   setup(props, context) {
     function imagesSize() {
-      return props.size * 0.2;
+      return props.size * 0.12;
     }
 
     function queenImage() {
@@ -97,6 +105,10 @@ export default {
       context.emit("selection", "n");
     }
 
+    function cancelPromotion() {
+      context.emit("cancelation");
+    }
+
     return {
       queenImage,
       rookImage,
@@ -107,6 +119,7 @@ export default {
       selectRook,
       selectBishop,
       selectKnight,
+      cancelPromotion,
     };
   },
 };
