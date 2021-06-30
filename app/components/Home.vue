@@ -143,6 +143,7 @@ export default {
 
     function handleMoveDone({ moveFan, fenAfterMove, lastMoveArrow }) {
       history.value.addMove({ moveFan, fenAfterMove, lastMoveArrow });
+      setTimeout(() => history.value.scrollToLastItem(), 0);
     }
 
     function handlePositionRequest(item) {

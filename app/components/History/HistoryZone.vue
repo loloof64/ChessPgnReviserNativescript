@@ -64,6 +64,11 @@ export default {
       const localTop = absoluteTop - rootTop;
       root.nativeView.scrollToVerticalOffset(localTop, false);
     },
+
+    scrollToTop: function() {
+      const root = this.$refs.root;
+      root.nativeView.scrollToVerticalOffset(0, false);
+    }
   },
 };
 </script>

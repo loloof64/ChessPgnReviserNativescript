@@ -94,7 +94,17 @@ export default {
         mainZone.value.scrollToItemAt(index);
       }
       else {
-        mainZone.value.scrollToItemAt(0);
+        mainZone.value.scrollToTop();
+      }
+    }
+
+
+    function scrollToLastItem() {
+      if (items.length > 0) {
+        mainZone.value.scrollToItemAt(items.length - 1);
+      }
+      else {
+        mainZone.value.ToTop();
       }
     }
 
@@ -184,6 +194,7 @@ export default {
       gotoNextRequest,
       gotoLastRequest,
       mainZone,
+      scrollToLastItem,
     };
   },
   components: {
