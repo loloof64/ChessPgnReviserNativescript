@@ -8,7 +8,7 @@
   >
     <history-buttons
       :width="width"
-      :height="height * 0.2"
+      :height="height * 0.15"
       @gotoFirst="gotoFirstRequest"
       @gotoPrevious="gotoPreviousRequest"
       @gotoNext="gotoNextRequest"
@@ -17,6 +17,7 @@
     <history-zone
       ref="mainZone"
       :items="items"
+      :height="height*0.80"
       @position-request="handlePositionRequest"
       :selectedIndex="selectedIndex"
     />
