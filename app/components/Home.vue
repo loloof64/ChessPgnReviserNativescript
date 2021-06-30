@@ -117,22 +117,27 @@ export default {
 
     function handleCheckmate(whiteTurnBeforeMove) {
       const side = whiteTurnBeforeMove ? "White" : "Black";
+      history.value.gotoLastRequest();
       alert(`${side} has won by checkmate !`);
     }
 
     function handleStalemate() {
+      history.value.gotoLastRequest();
       alert("Draw by stalemate !");
     }
 
     function handleThreeFoldRepetition() {
+      history.value.gotoLastRequest();
       alert("Draw by three-fold repetition !");
     }
 
     function handleInsufficientMaterial() {
+      history.value.gotoLastRequest();
       alert("Draw by insufficient material !");
     }
 
     function handleFiftyMovesDraw() {
+      history.value.gotoLastRequest();
       alert("Draw by the 50 moves rule !");
     }
 
@@ -155,6 +160,7 @@ export default {
       );
       if (confirmed) {
         board.value.stopGame();
+        history.value.gotoLastRequest();
       }
     }
 
