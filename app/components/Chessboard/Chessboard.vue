@@ -70,7 +70,7 @@
     <promotion-dialog
       col="0"
       row="0"
-      v-if="promotionDialogActive"
+      v-show="promotionDialogActive"
       :size="size"
       :whiteTurn="whiteTurn()"
       left="0px"
@@ -554,6 +554,7 @@ export default {
       this.emitGameFinishedIfPossible();
     },
   },
+
   computed: {
     cellsSize: function () {
       return Math.floor((this.size * 1.0) / 9.0);
@@ -577,7 +578,9 @@ export default {
   },
   watch: {
     reversed: function () {
-      this.repaintAll();
+      if (!this.promotionDialogActive) {
+        this.repaintAll();
+      }
     },
     size: function () {
       this.repaintAll();
