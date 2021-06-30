@@ -25,11 +25,13 @@ export default {
       required: true,
     },
   },
-  setup(props) {
+  setup(props, context) {
     function handleItemClick(index) {
       const selectedItem = props.items[index];
       if (selectedItem.fenAfterMove) {
-        console.log("Requested position " + selectedItem.fenAfterMove);
+        context.emit('position-request', {
+          ...selectedItem, index,
+        });
       }
     }
 

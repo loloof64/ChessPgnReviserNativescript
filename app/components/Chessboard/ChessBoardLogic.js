@@ -133,6 +133,10 @@ export default class ChessBoardLogic {
     }
   }
 
+  load(fen) {
+    this.logic.load(fen);
+  }
+
   get isCheckmate() {
     return this.logic.in_checkmate();
   }

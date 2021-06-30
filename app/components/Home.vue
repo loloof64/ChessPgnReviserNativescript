@@ -30,7 +30,7 @@
         @fityMovesDraw="handleFiftyMovesDraw"
         @move-done="handleMoveDone"
       />
-      <history ref="history" :width="historyWidth" :height="historyHeight" />
+      <history ref="history" :width="historyWidth" :height="historyHeight" @position-request="handlePositionRequest" />
     </FlexBoxLayout>
   </Page>
 </template>
@@ -70,11 +70,12 @@ export default {
       const screenWidthDip = Screen.mainScreen.widthDIPs;
       const screenHeightDip = Screen.mainScreen.heightDIPs;
 
-      const maxDimension = screenWidthDip > screenHeightDip ? screenWidthDip : screenHeightDip;
+      const maxDimension =
+        screenWidthDip > screenHeightDip ? screenWidthDip : screenHeightDip;
 
       historyWidth.value = isPortrait
         ? boardSize.value
-        : (maxDimension - boardSize.value) * 0.90;
+        : (maxDimension - boardSize.value) * 0.9;
       historyHeight.value = isPortrait
         ? (maxDimension - boardSize.value) * 0.6
         : boardSize.value;
@@ -110,8 +111,12 @@ export default {
       alert("Draw by the 50 moves rule !");
     }
 
-    function handleMoveDone({moveFan, fenAfterMove}) {
-      history.value.addMove({moveFan, fenAfterMove});
+    function handleMoveDone({ moveFan, fenAfterMove, lastMoveArrow }) {
+      history.value.addMove({ moveFan, fenAfterMove, lastMoveArrow });
+    }
+
+    function handlePositionRequest(item) {
+      board.value.positionRequest(item);
     }
 
     Application.on(Application.orientationChangedEvent, () => {
@@ -142,6 +147,7 @@ export default {
       mainZoneDirection,
       historyWidth,
       historyHeight,
+      handlePositionRequest,
     };
   },
   components: {

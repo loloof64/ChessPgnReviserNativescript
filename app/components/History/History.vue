@@ -1,6 +1,6 @@
 <template>
   <FlexBoxLayout flexDirection="column" :width="width" :height="height">
-    <history-zone :items="items" />
+    <history-zone :items="items" @position-request="handlePositionRequest" />
   </FlexBoxLayout>
 </template>
 
@@ -18,7 +18,7 @@ export default {
       required: true,
     },
   },
-  setup() {
+  setup(props, context) {
     const items = reactive([]);
 
     const whiteMove = ref(true);
@@ -38,10 +38,11 @@ export default {
       });
     }
 
-    function addMove({ moveFan, fenAfterMove }) {
+    function addMove({ moveFan, fenAfterMove, lastMoveArrow }) {
       items.push({
         text: moveFan,
         fenAfterMove,
+        lastMoveArrow,
       });
       whiteMove.value = !whiteMove.value;
 
@@ -53,7 +54,11 @@ export default {
       }
     }
 
-    return { items, addMove, newGame };
+    function handlePositionRequest(item) {
+      context.emit('position-request', item);
+    }
+
+    return { items, addMove, newGame, handlePositionRequest };
   },
   components: {
     HistoryZone,

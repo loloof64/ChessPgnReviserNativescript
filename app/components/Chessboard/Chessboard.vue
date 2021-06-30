@@ -510,6 +510,7 @@ export default {
             }),
             whiteMove: !this.chessLogic.isWhiteTurn,
             fenAfterMove: this.chessLogic.fen,
+            lastMoveArrow: this.lastMoveArrow,
           });
           this.repaintAll();
           this.emitGameFinishedIfPossible();
@@ -552,16 +553,24 @@ export default {
           whiteMove: !this.chessLogic.isWhiteTurn,
         }),
         fenAfterMove: this.chessLogic.fen,
+        lastMoveArrow: this.lastMoveArrow,
       });
 
       this.emitGameFinishedIfPossible();
     },
 
-    cancelPendingPromotion: function() {
+    cancelPendingPromotion: function () {
       this.promotionDialogActive = false;
       this.cancelDragAndDrop(this.pendingMovedPiece);
       this.pendingMovedPiece = undefined;
-    }
+    },
+
+    positionRequest: function(item) {
+      if (this.gameInProgress) return;
+      this.chessLogic.load(item.fenAfterMove);
+      this.lastMoveArrow = item.lastMoveArrow;
+      this.repaintAll();
+    },
   },
 
   computed: {
