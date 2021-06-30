@@ -16,7 +16,7 @@
       <ActionItem
         @tap="stopGame"
         icon="res://stop"
-        android.position="actionBar" 
+        android.position="actionBar"
       />
     </ActionBar>
 
@@ -36,7 +36,12 @@
         @fityMovesDraw="handleFiftyMovesDraw"
         @move-done="handleMoveDone"
       />
-      <history ref="history" :width="historyWidth" :height="historyHeight" @position-request="handlePositionRequest" />
+      <history
+        ref="history"
+        :width="historyWidth"
+        :height="historyHeight"
+        @position-request="handlePositionRequest"
+      />
     </FlexBoxLayout>
   </Page>
 </template>
@@ -125,9 +130,14 @@ export default {
       board.value.positionRequest(item);
     }
 
-    function stopGame() {
+    async function stopGame() {
       if (!board.value.gameIsInProgress()) return;
-      board.value.stopGame();
+      const confirmed = await confirm(
+        "Do you really want to stop current game and start a new one ?"
+      );
+      if (confirmed) {
+        board.value.stopGame();
+      }
     }
 
     Application.on(Application.orientationChangedEvent, () => {
