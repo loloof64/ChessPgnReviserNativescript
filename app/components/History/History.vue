@@ -89,28 +89,50 @@ export default {
 
     function gotoPreviousRequest() {
       const firstMoveIndex = 1;
-      if (selectedIndex.value > firstMoveIndex) {
-        selectedIndex.value -= 1;
-        let currentItem = items[selectedIndex.value];
+      let tempIndex = selectedIndex.value;
+      if (tempIndex > firstMoveIndex) {
+        tempIndex -= 1;
+        let currentItem = items[tempIndex];
         while (!currentItem.fenAfterMove) {
-          selectedIndex.value -= 1;
-          currentItem = items[selectedIndex.value];
-          if (selectedIndex.value < firstMoveIndex) {
+          tempIndex -= 1;
+          currentItem = items[tempIndex];
+          if (tempIndex < firstMoveIndex) {
             //TODO goto first
             return;
           }
         }
         context.emit("position-request", {
           ...currentItem,
-          index: selectedIndex.value,
+          index: tempIndex,
         });
-      }
-      else if (selectedIndex.value === -1) {
+      } else if (tempIndex === -1) {
         //TODO goto first
       }
     }
 
-    function gotoNextRequest() {}
+    function gotoNextRequest() {
+      // If we just have the first number, nothing to do.
+      if (items.length < 2) return;
+      let tempIndex = selectedIndex.value;
+      if (tempIndex < items.length - 1) {
+        tempIndex += 1;
+        let currentItem = items[tempIndex];
+        while (!currentItem?.fenAfterMove) {
+          tempIndex += 1;
+          currentItem = items[tempIndex];
+          if (tempIndex >= items.length - 1) break;
+        }
+        // We may need to get backward if the result node is not affordable.
+        while (!currentItem?.fenAfterMove) {
+          tempIndex -= 1;
+          currentItem = items[tempIndex];
+        }
+        context.emit("position-request", {
+          ...currentItem,
+          index: tempIndex,
+        });
+      }
+    }
 
     function gotoLastRequest() {}
 
