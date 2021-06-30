@@ -39,6 +39,7 @@
       />
       <history
         ref="history"
+        :startFen="startFen"
         :width="historyWidth"
         :height="historyHeight"
         @position-request="handlePositionRequest"
@@ -52,7 +53,7 @@ import { ref, onMounted } from "@vue/composition-api";
 import ChessBoard from "./Chessboard/Chessboard.vue";
 import History from "./History/History.vue";
 import { Screen, Application } from "@nativescript/core";
-import { EMPTY_POSITION_FEN } from './Chessboard/ChessBoardLogic';
+import { DEFAULT_FEN, EMPTY_POSITION_FEN } from './Chessboard/ChessBoardLogic';
 export default {
   setup() {
     const board = ref();
@@ -62,6 +63,7 @@ export default {
     const mainZoneDirection = ref("column");
     const historyWidth = ref(0);
     const historyHeight = ref(0);
+    const startFen = ref(DEFAULT_FEN);
 
     function updateBoardSize() {
       const screenWidthDip = Screen.mainScreen.widthDIPs;
@@ -95,6 +97,7 @@ export default {
     }
 
     function doStartNewGame() {
+      startFen.value = DEFAULT_FEN;
       history.value.newGame();
       board.value.newGame();
     }

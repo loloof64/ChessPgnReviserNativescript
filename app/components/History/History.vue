@@ -26,6 +26,7 @@
 import { reactive, ref } from "@vue/composition-api";
 import HistoryZone from "./HistoryZone.vue";
 import HistoryButtons from "./HistoryButtons.vue";
+import { DEFAULT_FEN } from "../Chessboard/ChessBoardLogic";
 
 export default {
   props: {
@@ -36,6 +37,10 @@ export default {
     height: {
       type: Number,
       required: true,
+    },
+    startFen: {
+      type: String,
+      default: DEFAULT_FEN,
     },
   },
   setup(props, context) {
@@ -85,7 +90,11 @@ export default {
       selectedIndex.value = index;
     }
 
-    function gotoFirstRequest() {}
+    function gotoFirstRequest() {
+      context.emit("position-request", {
+        fenAfterMove: props.startFen,
+      });
+    }
 
     function gotoPreviousRequest() {
       const firstMoveIndex = 1;
@@ -97,7 +106,9 @@ export default {
           tempIndex -= 1;
           currentItem = items[tempIndex];
           if (tempIndex < firstMoveIndex) {
-            //TODO goto first
+            context.emit("position-request", {
+              fenAfterMove: props.startFen,
+            });
             return;
           }
         }
@@ -106,7 +117,9 @@ export default {
           index: tempIndex,
         });
       } else if (tempIndex === -1) {
-        //TODO goto first
+        context.emit("position-request", {
+          fenAfterMove: props.startFen,
+        });
       }
     }
 

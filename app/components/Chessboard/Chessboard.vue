@@ -87,6 +87,13 @@ import { Color } from "@nativescript/core";
 const ChessBoardLogic = require("./ChessBoardLogic");
 import PromotionDialog from "./PromotionDialog.vue";
 
+const hiddenLastMoveArrow = {
+  fromFile: -10,
+  fromRank: -10,
+  toFile: -10,
+  toRank: -10,
+};
+
 export default {
   props: {
     size: {
@@ -145,12 +152,7 @@ export default {
       dndActive: false,
       promotionDialogActive: false,
       gameInProgress: false,
-      lastMoveArrow: {
-        fromFile: -10,
-        fromRank: -10,
-        toFile: -10,
-        toRank: -10,
-      },
+      lastMoveArrow: hiddenLastMoveArrow,
       pendingMovedPiece: undefined,
     };
   },
@@ -158,12 +160,7 @@ export default {
     newGame: function () {
       const DEFAULT_FEN =
         "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
-      this.lastMoveArrow = {
-        fromFile: -10,
-        fromRank: -10,
-        toFile: -10,
-        toRank: -10,
-      };
+      this.lastMoveArrow = hiddenLastMoveArrow;
       this.chessLogic = new ChessBoardLogic.default(DEFAULT_FEN);
       this.gameInProgress = true;
       this.repaintAll();
@@ -565,27 +562,27 @@ export default {
       this.pendingMovedPiece = undefined;
     },
 
-    positionRequest: function(item) {
+    positionRequest: function (item) {
       if (this.gameInProgress) return;
       this.chessLogic.load(item.fenAfterMove);
-      this.lastMoveArrow = item.lastMoveArrow;
+      this.lastMoveArrow = item?.lastMoveArrow || hiddenLastMoveArrow;
       this.repaintAll();
-      this.$emit('position-selected', item.index);
+      this.$emit("position-selected", item.index);
     },
 
-    stopGame: function() {
+    stopGame: function () {
       if (this.promotionDialogActive) return;
       this.gameInProgress = false;
       this.repaintAll();
-      alert('Game stopped !');
+      alert("Game stopped !");
     },
 
-    gameIsInProgress: function() {
+    gameIsInProgress: function () {
       return this.gameInProgress;
     },
-    fen: function() {
+    fen: function () {
       return this.chessLogic.fen;
-    }
+    },
   },
 
   computed: {
