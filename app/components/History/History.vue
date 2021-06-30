@@ -15,6 +15,7 @@
       @gotoLast="gotoLastRequest"
     />
     <history-zone
+      ref="mainZone"
       :items="items"
       @position-request="handlePositionRequest"
       :selectedIndex="selectedIndex"
@@ -44,6 +45,7 @@ export default {
     },
   },
   setup(props, context) {
+    const mainZone = ref();
     const items = reactive([]);
 
     const whiteMove = ref(true);
@@ -88,6 +90,12 @@ export default {
 
     function handlePositionSelectedOnBoard(index) {
       selectedIndex.value = index;
+      if (index >= 0) {
+        mainZone.value.scrollToItemAt(index);
+      }
+      else {
+        mainZone.value.scrollToItemAt(0);
+      }
     }
 
     function gotoFirstRequest() {
@@ -175,6 +183,7 @@ export default {
       gotoPreviousRequest,
       gotoNextRequest,
       gotoLastRequest,
+      mainZone,
     };
   },
   components: {
