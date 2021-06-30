@@ -12,6 +12,12 @@
         icon="res://reverse"
         android.position="actionBar"
       />
+
+      <ActionItem
+        @tap="stopGame"
+        icon="res://stop"
+        android.position="actionBar" 
+      />
     </ActionBar>
 
     <FlexBoxLayout
@@ -119,6 +125,10 @@ export default {
       board.value.positionRequest(item);
     }
 
+    function stopGame() {
+      board.value.stopGame();
+    }
+
     Application.on(Application.orientationChangedEvent, () => {
       updateMainZoneDirection();
       updateBoardSize();
@@ -148,6 +158,7 @@ export default {
       historyWidth,
       historyHeight,
       handlePositionRequest,
+      stopGame,
     };
   },
   components: {

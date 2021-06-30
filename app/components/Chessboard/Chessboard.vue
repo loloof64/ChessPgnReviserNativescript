@@ -571,6 +571,13 @@ export default {
       this.lastMoveArrow = item.lastMoveArrow;
       this.repaintAll();
     },
+
+    stopGame: function() {
+      if (this.promotionDialogActive) return;
+      this.gameInProgress = false;
+      this.repaintAll();
+      alert('Game stopped !');
+    },
   },
 
   computed: {
