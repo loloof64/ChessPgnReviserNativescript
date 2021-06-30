@@ -21,21 +21,21 @@ export default class ChessBoardLogic {
     this.logic = new Chess(positionFen);
   }
 
-  static cellCoordinatesToAlgebraic({ file, rank }) {
+  cellCoordinatesToAlgebraic({ file, rank }) {
     return (
       String.fromCharCode("a".charCodeAt(0) + file) +
       String.fromCharCode("1".charCodeAt(0) + rank)
     );
   }
 
-  static coordinatesFromAlgebraic(cellAlgebraic) {
+  coordinatesFromAlgebraic(cellAlgebraic) {
     const file = cellAlgebraic.charCodeAt(0) - "a".charCodeAt(0);
     const rank = cellAlgebraic.charCodeAt(1) - "1".charCodeAt(0);
 
     return { file, rank };
   }
 
-  static convertSanToFan({ moveSan, whiteMove }) {
+  convertSanToFan({ moveSan, whiteMove }) {
     let moveFan = moveSan;
     let firstPieceIndex = -1;
     for (let i = 0; i<moveFan.length; i++) {
@@ -92,10 +92,10 @@ export default class ChessBoardLogic {
     if (!this.isLegalMove({ fromAlgebraic, toAlgebraic })) return false;
     const pieceType = this.getValueAtCell(fromAlgebraic)?.type;
     if (pieceType !== "p") return false;
-    const { rank: fromRank } = ChessBoardLogic.coordinatesFromAlgebraic(
+    const { rank: fromRank } = this.coordinatesFromAlgebraic(
       fromAlgebraic
     );
-    const { rank: toRank } = ChessBoardLogic.coordinatesFromAlgebraic(
+    const { rank: toRank } = this.coordinatesFromAlgebraic(
       toAlgebraic
     );
 
