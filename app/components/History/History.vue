@@ -98,7 +98,7 @@ export default {
 
     function gotoPreviousRequest() {
       const firstMoveIndex = 1;
-      let tempIndex = selectedIndex.value;
+      let tempIndex = selectedIndex.value || -1;
       if (tempIndex > firstMoveIndex) {
         tempIndex -= 1;
         let currentItem = items[tempIndex];
@@ -116,7 +116,7 @@ export default {
           ...currentItem,
           index: tempIndex,
         });
-      } else if (tempIndex === -1) {
+      } else {
         context.emit("position-request", {
           fenAfterMove: props.startFen,
         });
@@ -126,7 +126,7 @@ export default {
     function gotoNextRequest() {
       // If we just have the first number, nothing to do.
       if (items.length < 2) return;
-      let tempIndex = selectedIndex.value;
+      let tempIndex = selectedIndex.value || -1;
       if (tempIndex < items.length - 1) {
         tempIndex += 1;
         let currentItem = items[tempIndex];
@@ -135,6 +135,7 @@ export default {
           currentItem = items[tempIndex];
           if (tempIndex >= items.length - 1) break;
         }
+
         // We may need to get backward if the result node is not affordable.
         while (!currentItem?.fenAfterMove) {
           tempIndex -= 1;
