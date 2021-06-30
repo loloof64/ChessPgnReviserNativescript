@@ -1,5 +1,19 @@
 <template>
-  <FlexBoxLayout flexDirection="column" :width="width" :height="height">
+  <FlexBoxLayout
+    id="root"
+    flexDirection="column"
+    :width="width"
+    :height="height"
+    justifyContent="flex-start"
+  >
+    <history-buttons
+      :width="width"
+      :height="height * 0.2"
+      @gotoFirst="gotoFirstRequest"
+      @gotoPrevious="gotoPreviousRequest"
+      @gotoNext="gotoNextRequest"
+      @gotoLast="gotoLastRequest"
+    />
     <history-zone
       :items="items"
       @position-request="handlePositionRequest"
@@ -11,6 +25,8 @@
 <script>
 import { reactive, ref } from "@vue/composition-api";
 import HistoryZone from "./HistoryZone.vue";
+import HistoryButtons from "./HistoryButtons.vue";
+
 export default {
   props: {
     width: {
@@ -69,6 +85,35 @@ export default {
       selectedIndex.value = index;
     }
 
+    function gotoFirstRequest() {}
+
+    function gotoPreviousRequest() {
+      const firstMoveIndex = 1;
+      if (selectedIndex.value > firstMoveIndex) {
+        selectedIndex.value -= 1;
+        let currentItem = items[selectedIndex.value];
+        while (!currentItem.fenAfterMove) {
+          selectedIndex.value -= 1;
+          currentItem = items[selectedIndex.value];
+          if (selectedIndex.value < firstMoveIndex) {
+            //TODO goto first
+            return;
+          }
+        }
+        context.emit("position-request", {
+          ...currentItem,
+          index: selectedIndex.value,
+        });
+      }
+      else if (selectedIndex.value === -1) {
+        //TODO goto first
+      }
+    }
+
+    function gotoNextRequest() {}
+
+    function gotoLastRequest() {}
+
     return {
       items,
       addMove,
@@ -76,16 +121,21 @@ export default {
       handlePositionRequest,
       handlePositionSelectedOnBoard,
       selectedIndex,
+      gotoFirstRequest,
+      gotoPreviousRequest,
+      gotoNextRequest,
+      gotoLastRequest,
     };
   },
   components: {
     HistoryZone,
+    HistoryButtons,
   },
 };
 </script>
 
 <style scoped>
-FlexBoxLayout {
+#root {
   background-color: burlywood;
 }
 </style>

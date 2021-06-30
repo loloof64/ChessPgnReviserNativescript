@@ -1,5 +1,5 @@
 <template>
-  <ScrollView orientation="vertical">
+  <ScrollView orientation="vertical" backgroundColor="transparent">
     <WrapLayout orientation="horizontal">
       <template v-for="(item, index) in items">
         <Button
@@ -46,9 +46,6 @@ export default {
     }
 
     function getBackground(index) {
-      ///////////////////
-      console.log(index, props.selectedIndex);
-      /////////////////////
       return props.selectedIndex === index ? "lightgreen" : "transparent";
     }
 
