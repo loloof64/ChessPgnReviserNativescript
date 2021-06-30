@@ -134,7 +134,21 @@ export default {
       }
     }
 
-    function gotoLastRequest() {}
+    function gotoLastRequest() {
+      // If we just have the first number, nothing to do.
+      if (items.length < 2) return;
+      let tempIndex = items.length - 1;
+      let currentItem = items[tempIndex];
+      // We may need to get backward if the result node is not affordable.
+      while (!currentItem?.fenAfterMove) {
+        tempIndex -= 1;
+        currentItem = items[tempIndex];
+      }
+      context.emit("position-request", {
+        ...currentItem,
+        index: tempIndex,
+      });
+    }
 
     return {
       items,
