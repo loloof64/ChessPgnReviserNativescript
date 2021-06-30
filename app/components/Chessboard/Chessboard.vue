@@ -509,6 +509,7 @@ export default {
               whiteMove: !this.chessLogic.isWhiteTurn,
             }),
             whiteMove: !this.chessLogic.isWhiteTurn,
+            fenAfterMove: this.chessLogic.fen,
           });
           this.repaintAll();
           this.emitGameFinishedIfPossible();
@@ -550,6 +551,7 @@ export default {
           moveSan: moveData.san,
           whiteMove: !this.chessLogic.isWhiteTurn,
         }),
+        fenAfterMove: this.chessLogic.fen,
       });
 
       this.emitGameFinishedIfPossible();

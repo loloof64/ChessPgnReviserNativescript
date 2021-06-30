@@ -27,9 +27,10 @@ export default {
         items.splice(0, items.length);
     }
 
-    function addMove({moveFan}) {
+    function addMove({moveFan, fenAfterMove}) {
         items.push({
             text: moveFan,
+            fenAfterMove,
         });
     }
 

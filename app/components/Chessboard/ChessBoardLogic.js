@@ -152,4 +152,8 @@ export default class ChessBoardLogic {
   get isFiftyMovesDraw() {
     return !this.logic.insufficient_material() && this.logic.in_draw();
   }
+
+  get fen() {
+    return this.logic.fen();
+  }
 }

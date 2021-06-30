@@ -1,13 +1,17 @@
 <template>
-<ScrollView  orientation="vertical">
-  <WrapLayout orientation="horizontal">
-    <Label
-      v-for="(item, index) in items"
-      :key="index"
-      :text="item.text + ' '"
-    />
-  </WrapLayout>
-</ScrollView>
+  <ScrollView orientation="vertical">
+    <WrapLayout orientation="horizontal">
+      <Button
+        v-for="(item, index) in items"
+        :key="index"
+        :text="item.text"
+        @tap="() => handleItemClick(index)"
+        backgroundColor="transparent"
+        margin="0px"
+        fontSize="26.3em"
+      />
+    </WrapLayout>
+  </ScrollView>
 </template>
 
 <script>
@@ -18,7 +22,18 @@ export default {
       required: true,
     },
   },
-  setup() {},
+  setup(props) {
+    function handleItemClick(index) {
+      const selectedItem = props.items[index];
+      if (selectedItem.fenAfterMove) {
+        console.log("Requested position " + selectedItem.fenAfterMove);
+      }
+    }
+
+    return {
+      handleItemClick,
+    };
+  },
 };
 </script>
 

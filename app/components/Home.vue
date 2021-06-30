@@ -110,8 +110,8 @@ export default {
       alert("Draw by the 50 moves rule !");
     }
 
-    function handleMoveDone({moveFan, whiteMove}) {
-      history.value.addMove({moveFan});
+    function handleMoveDone({moveFan, fenAfterMove}) {
+      history.value.addMove({moveFan, fenAfterMove});
     }
 
     Application.on(Application.orientationChangedEvent, () => {
