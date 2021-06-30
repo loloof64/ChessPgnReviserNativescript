@@ -126,6 +126,7 @@ export default {
     }
 
     function stopGame() {
+      if (!board.value.gameIsInProgress()) return;
       board.value.stopGame();
     }
 

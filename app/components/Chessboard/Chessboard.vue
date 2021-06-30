@@ -578,6 +578,10 @@ export default {
       this.repaintAll();
       alert('Game stopped !');
     },
+
+    gameIsInProgress: function() {
+      return this.gameInProgress;
+    }
   },
 
   computed: {
