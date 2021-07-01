@@ -6,7 +6,7 @@
 
     <ListView for="item in listOfItems" @itemTap="onItemTap">
       <v-template>
-        <Label :text="item.text" />
+        <Label :text="item.text" class="itemText" />
       </v-template>
     </ListView>
   </Page>
@@ -34,10 +34,18 @@ export default {
 // Custom styles
 
 ActionBar {
-  background-color: lightgreen;
+  background-color: green;
 }
 
 ActionBar > Label {
   color: white;
+}
+
+.itemText {
+  font-size: 16em;
+}
+
+ListView {
+  background-color: sandybrown;
 }
 </style>

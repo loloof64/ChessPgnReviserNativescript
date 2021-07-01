@@ -31,10 +31,14 @@ export default {
 // Custom styles
 
 ActionBar {
-  background-color: lightgreen;
+  background-color: green;
 }
 
 ActionBar > Label {
   color: white;
+}
+
+ListView {
+  background-color: sandybrown;
 }
 </style>

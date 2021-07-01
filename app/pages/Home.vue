@@ -39,3 +39,13 @@ export default {
   },
 };
 </script>
+
+<style scoped lang="scss">
+
+TabView {
+  tab-background-color: rgb(182, 57, 57);
+  selected-tab-text-color: lightgreen;
+  android-selected-tab-highlight-color: lightgreen;
+  tab-text-color: white;
+}
+</style>
