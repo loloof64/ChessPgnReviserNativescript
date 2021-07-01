@@ -40,7 +40,7 @@ export default {
     handleItemClick: function (index) {
       const selectedItem = this.items[index];
       if (selectedItem.fenAfterMove) {
-        context.emit("position-request", {
+        this.$emit("position-request", {
           ...selectedItem,
           index,
         });
