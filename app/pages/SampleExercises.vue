@@ -18,10 +18,17 @@ export default {
     const listOfItems = [
       {
         text: "King+Pawn/King",
+        name: 'kp_k',
+      },
+      {
+        text: "Checkmate in 2",
+        name: 'checkmate_in_two',
       },
     ];
 
-    function onItemTap(event) {}
+    function onItemTap(event) {
+      console.log(event);
+    }
 
     return { listOfItems, onItemTap };
   },

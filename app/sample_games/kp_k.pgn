@@ -1,0 +1,39 @@
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "?"]
+[Result "1-0"]
+[FEN "8/8/8/8/8/P5k1/8/7K w - - 0 26"]
+[Setup "1"]
+[Goal "1-0"]
+
+26. a4 Kf4 27. a5 Ke5 28. a6 Kd6 29. a7 Kc7 30. a8=Q  1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "?"]
+[Result "1-0"]
+[FEN "4k3/8/4K3/4P3/8/8/8/8 w - - 0 32"]
+[Setup "1"]
+[Goal "1-0"]
+
+32. Kd6 ( 32. Kf6 Kf8 33. e6 Ke8 34. e7 Kd7 35. Kf7 )32... Kd8 33. e6 Ke8 34. e7
+Kf7 35. Kd7  1-0
+
+[Event "?"]
+[Site "?"]
+[Date "????.??.??"]
+[Round "?"]
+[White "?"]
+[Black "?"]
+[Result "1-0"]
+[FEN "8/3p4/8/2P5/P3k3/8/8/7K w - - 0 40"]
+[Setup "1"]
+[Goal "1-0"]
+
+40. c6 dxc6 41. a5 Kd5 42. a6  1-0
