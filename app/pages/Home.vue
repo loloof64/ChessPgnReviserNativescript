@@ -4,13 +4,13 @@
     :selectedIndex="selectedIndex"
     @selectedIndexChange="indexChange"
   >
-    <TabViewItem title="Samples">
+    <TabViewItem title="Samples" iconSource="~/pages/bookshelf.png">
       <Frame id="samples">
         <sample-exercises />
       </Frame>
     </TabViewItem>
 
-    <TabViewItem title="Personals">
+    <TabViewItem title="Personals" iconSource="~/pages/crayons.png">
       <Frame id="personals">
         <personal-exercises />
       </Frame>

@@ -16,5 +16,7 @@ Using some icons from [FlatIcon](https://www.flaticon.com/) :
 * previous => from https://www.flaticon.com/free-icon/black-triangular-arrowhead-pointing-to-left-direction_45050 and designed by FreePik
 * last => from https://www.flaticon.com/free-icon/right-thin-arrowheads_32738 and designed by FreePik
 * next => from https://www.flaticon.com/free-icon/right-triangular-arrowhead_44452 and designed by FreePik
+* bookshelf => from https://www.flaticon.com/free-icon/bookshelf_3100752 and designed by FreePik
+* crayons => from https://www.flaticon.com/free-icon/crayons_1081047 and designed by FreePik
 
 FreeSerif font downloaded from https://fr.fonts2u.com/free-serif.police
