@@ -1,7 +1,7 @@
 <template>
   <Page>
     <ActionBar>
-      <Label text="Home" />
+      <Label text="Game page" />
       <ActionItem
         @tap="newGame"
         icon="res://start"
@@ -50,10 +50,10 @@
 
 <script>
 import { ref, onMounted } from "@vue/composition-api";
-import ChessBoard from "./Chessboard/Chessboard.vue";
-import History from "./History/History.vue";
+import ChessBoard from "~/components/Chessboard/Chessboard.vue";
+import History from "~/components/History/History.vue";
 import { Screen, Application } from "@nativescript/core";
-import { DEFAULT_FEN, EMPTY_POSITION_FEN } from './Chessboard/ChessBoardLogic';
+import { DEFAULT_FEN, EMPTY_POSITION_FEN } from '~/components/Chessboard/ChessBoardLogic';
 export default {
   setup() {
     const board = ref();
